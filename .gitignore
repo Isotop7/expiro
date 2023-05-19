@@ -266,3 +266,4 @@ FakesAssemblies/
 # custom files    #
 ###################
 isgood.json
+isgood.db*

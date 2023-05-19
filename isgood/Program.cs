@@ -3,11 +3,18 @@
 using Microsoft.Extensions.Configuration;
 using System;
 using System.IO;
+using System.Threading.Tasks;
+using System.Collections.Concurrent;
 
-class Program
+public class Program
 {
     private static AppConfiguration? _appConfiguration;
-    static void Main(string[] args)
+    public static ConcurrentQueue<Product> ElementQueue
+    {
+        get;
+    } = new ConcurrentQueue<Product>();
+
+    static async Task Main(string[] args)
     {
         Console.WriteLine(@"
             ┬┌─┐┌─┐┌─┐┌─┐┌┬┐
@@ -26,29 +33,7 @@ class Program
 			IConfigurationRoot configuration = builder.Build();
 			_appConfiguration = new();
             configuration.Bind(_appConfiguration);
-
-            if (_appConfiguration.MqttBrokerURL is null || _appConfiguration.MqttBrokerURL == string.Empty) 
-            {
-                throw new Exception("Configuration file is missing value 'MqttBrokerURL'");
-            }
-            else if (_appConfiguration.MqttBrokerPort is null || _appConfiguration.MqttBrokerPort < 0 ) 
-            {
-                throw new Exception("Configuration file is missing value 'MqttBrokerPort'");
-            }
-            else if (_appConfiguration.MqttBrokerAuthEnabled is not null) 
-            {
-                if (_appConfiguration.MqttBrokerAuthEnabled == true) 
-                {
-                    if (_appConfiguration.MqttBrokerUsername is null || _appConfiguration.MqttBrokerUsername == string.Empty)
-                    {
-                        throw new Exception("Configuration file is missing value 'MqttBrokerUsername'");
-                    }
-                    else if (_appConfiguration.MqttBrokerPassword is null || _appConfiguration.MqttBrokerPassword == string.Empty)
-                    {
-                        throw new Exception("Configuration file is missing value 'MqttBrokerPassword'");
-                    }
-                }
-            }
+            _appConfiguration.Validate();
         }
         catch (Exception ex) 
         {
@@ -56,7 +41,29 @@ class Program
             System.Environment.Exit(1);
         }
 
-        string brokerUrl = $"{_appConfiguration.MqttBrokerURL}:{_appConfiguration.MqttBrokerPort}";
-        Console.WriteLine($"+ Connecting to mqtt broker '{brokerUrl}' ...");
+        if (_appConfiguration.MqttConfiguration.UseEmbedded == true)
+        {
+            Console.WriteLine("+ Starting embedded mqtt broker");
+            MqttBroker embeddedBroker = new(_appConfiguration.MqttConfiguration);
+            await embeddedBroker.Start();
+
+            InsertionWorkerService insertionWorkerService = new();
+            await insertionWorkerService.Start();
+
+            // TODO: Read barcode from message
+            // TODO: Query API with barcode
+            // TODO: Saturate package with informations
+            // TODO: Listen on CTRL+C to quit
+
+            Console.WriteLine("+ embeddedBroker started. Press any key to stop ...");
+            Console.ReadLine();
+
+            await embeddedBroker.Stop();
+        }
+        else
+        {
+            string brokerUrl = $"{_appConfiguration.MqttConfiguration.BrokerURL}:{_appConfiguration.MqttConfiguration.BrokerPort}";
+            Console.WriteLine($"+ Connecting to mqtt broker '{brokerUrl}' ...");
+        }
     }
 }
