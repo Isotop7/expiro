@@ -13,11 +13,18 @@ public class InsertionWorkerService
             {
                 while (true)
                 {
-                    if (Program.ElementQueue.TryDequeue(out Product product))
+                    if (Program.DatabaseQueue.TryDequeue(out Product? product))
                     {
-                        Console.WriteLine($"+ InsertionWorkerService: Dequeued element with barcode '{product.Barcode}' and saving it to database");
-                        dbContext.Products.Add(product);
-                        await dbContext.SaveChangesAsync();
+                        if (product == null)
+                        {
+                            throw new FormatException("Dequeued invalid object");
+                        }
+                        else
+                        {
+                            Console.WriteLine($"+ InsertionWorkerService: Dequeued element with barcode '{product.Barcode}' and saving it to database");
+                            dbContext.Products.Add(product);
+                            await dbContext.SaveChangesAsync();
+                        }
                     }
 
                     await Task.Delay(TimeSpan.FromSeconds(1));
