@@ -1,6 +1,6 @@
 namespace isgood;
 
-internal class MqttConfiguration
+public class MqttConfiguration
 {
     public bool? UseEmbedded { get; set; }
     public string? BrokerURL { get; set; }
