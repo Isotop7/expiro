@@ -14,7 +14,13 @@ public class Product
     [JsonProperty("barcode")]
     public string Barcode { get; set; }
     
-    public string Name { get; set; }
+    public string ProductName { get; set; }
+
+    public string Categories { get; set; }
+
+    public string Countries { get; set; }
+
+    public string ImageUrl { get; set; }
 
     [JsonProperty("bestBefore")]
     public DateTime BestBefore { get; set; }
@@ -24,7 +30,10 @@ public class Product
 
     public Product() {
         Barcode = string.Empty;
-        Name = string.Empty;
+        ProductName = string.Empty;
+        Categories = string.Empty;
+        Countries = string.Empty;
+        ImageUrl = string.Empty;
         BestBefore = DateTime.MaxValue;
         Ready = false;
     }

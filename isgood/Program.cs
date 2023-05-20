@@ -1,15 +1,20 @@
 ﻿namespace isgood;
 
-using Microsoft.Extensions.Configuration;
 using System;
 using System.IO;
 using System.Threading.Tasks;
 using System.Collections.Concurrent;
 
+using Microsoft.Extensions.Configuration;
+
 public class Program
 {
     private static AppConfiguration? _appConfiguration;
     public static ConcurrentQueue<Product> DatabaseQueue
+    {
+        get;
+    } = new ConcurrentQueue<Product>();
+    public static ConcurrentQueue<Product> APIQueue
     {
         get;
     } = new ConcurrentQueue<Product>();
@@ -45,20 +50,16 @@ public class Program
         {
             Console.WriteLine("+ Starting embedded mqtt broker");
             MqttBroker embeddedBroker = new(_appConfiguration.MqttConfiguration);
-            await embeddedBroker.Start();
+            embeddedBroker.Start();
+            Console.WriteLine("+ isgood: embeddedBroker started");
 
-            InsertionWorkerService insertionWorkerService = new();
-            await insertionWorkerService.Start();
+            DatabaseWorkerService databaseWorkerService = new();
+            databaseWorkerService.Start();
+            Console.WriteLine("+ isgood: DatabaseWorkerService started");
 
-            // TODO: Read barcode from message
-            // TODO: Query API with barcode
-            // TODO: Saturate package with informations
-            // TODO: Listen on CTRL+C to quit
-
-            Console.WriteLine("+ embeddedBroker started. Press any key to stop ...");
-            Console.ReadLine();
-
-            await embeddedBroker.Stop();
+            APIWorkerService apiWorkerService = new(_appConfiguration);
+            apiWorkerService.Start();
+            Console.WriteLine("+ isgood: APIWorkerService started");
         }
         else
         {

@@ -267,3 +267,4 @@ FakesAssemblies/
 ###################
 isgood.json
 isgood.db*
+isgood/OpenFoodFactsAPI/api-template.json
