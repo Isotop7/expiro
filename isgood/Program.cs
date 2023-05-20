@@ -9,7 +9,7 @@ using System.Collections.Concurrent;
 public class Program
 {
     private static AppConfiguration? _appConfiguration;
-    public static ConcurrentQueue<Product> ElementQueue
+    public static ConcurrentQueue<Product> DatabaseQueue
     {
         get;
     } = new ConcurrentQueue<Product>();
