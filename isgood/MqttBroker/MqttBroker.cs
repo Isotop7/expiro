@@ -33,7 +33,7 @@ internal class MqttBroker
         {
             if (e.ApplicationMessage.Topic.Equals(mqttConfiguration.TopicBarcode))
             {
-                Product product = new();
+                Product? product = new();
                 try
                 {
                     string content = e.ApplicationMessage.ConvertPayloadToString().Trim() ?? string.Empty;
@@ -45,30 +45,35 @@ internal class MqttBroker
                     {
                         throw new InvalidCastException("Payload was empty and could not be deserialized");
                     }
+
+                    if (product == null)
+                    {
+                        throw new InvalidCastException("Product could not be deserialized");
+                    }
+
+                    if (product.Barcode != null && Regex.IsMatch(product.Barcode, AppConfiguration.BarcodeRegex) == false)
+                    {
+                        throw new InvalidOperationException("Published barcode does not match format");
+                    }
+
+                    int idx = Products.FindIndex(e => e.Barcode == product.Barcode);
+                    if (idx == -1)
+                    {
+                        Console.WriteLine($"+ embeddedBroker: New product with barcode '{product.Barcode}' published, starting timer with {mqttConfiguration.BestBeforeTimeout} seconds timeout ...");
+                    
+                        bestBeforeTimeout = new Timer(
+                            BestBeforeTimeoutTriggered, 
+                            product, 
+                            TimeSpan.FromSeconds(mqttConfiguration.BestBeforeTimeout), 
+                            Timeout.InfiniteTimeSpan
+                        );
+
+                        Products.Add(product);
+                    }
                 }
                 catch
                 {
                     throw;
-                }
-
-                if (product.Barcode != null && Regex.IsMatch(product.Barcode, AppConfiguration.BarcodeRegex) == false)
-                {
-                    throw new InvalidOperationException("Published barcode does not match format");
-                }
-
-                int idx = Products.FindIndex(e => e.Barcode == product.Barcode);
-                if (idx == -1)
-                {
-                    Console.WriteLine($"+ embeddedBroker: New product with barcode '{product.Barcode}' published, starting timer with {mqttConfiguration.BestBeforeTimeout} seconds timeout ...");
-                
-                    bestBeforeTimeout = new Timer(
-                        BestBeforeTimeoutTriggered, 
-                        product, 
-                        TimeSpan.FromSeconds(mqttConfiguration.BestBeforeTimeout), 
-                        Timeout.InfiniteTimeSpan
-                    );
-
-                    Products.Add(product);
                 }
             }
             else if (e.ApplicationMessage.Topic.Equals(mqttConfiguration.TopicBestBeforeSet))
@@ -130,13 +135,17 @@ internal class MqttBroker
         if (element is not null)
         {
             Product product = (Product)element;
-            if (product is not null)
+            if (product == null)
             {
-                Console.WriteLine($"+ embeddedBroker: Timer for product '{product?.Barcode}' finished");
+                throw new InvalidCastException("Object could not be casted as product");
+            }
+            else
+            {
+                Console.WriteLine($"+ embeddedBroker: Timer for product '{product.Barcode}' finished");
                 Product matchedProduct = Products.First(e => e.Barcode == product.Barcode);
                 matchedProduct.Ready = true;
 
-                Program.ElementQueue.Enqueue(matchedProduct);
+                Program.DatabaseQueue.Enqueue(matchedProduct);
                 Products.Remove(matchedProduct);
                 Console.WriteLine($"+ embeddedBroker: Removed product with barcode '{product.Barcode}' from working list and queued it for db insertion");
             }
