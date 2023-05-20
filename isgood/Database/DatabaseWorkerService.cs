@@ -3,7 +3,7 @@ namespace isgood;
 using System;
 using System.Threading.Tasks;
 
-public class InsertionWorkerService
+public class DatabaseWorkerService
 {
     public async Task Start()
     {
@@ -21,16 +21,15 @@ public class InsertionWorkerService
                         }
                         else
                         {
-                            Console.WriteLine($"+ InsertionWorkerService: Dequeued element with barcode '{product.Barcode}' and saving it to database");
+                            Console.WriteLine($"+ DatabaseWorkerService: Dequeued element with barcode '{product.Barcode}' and saving it to database");
                             dbContext.Products.Add(product);
                             await dbContext.SaveChangesAsync();
                         }
                     }
 
-                    await Task.Delay(TimeSpan.FromSeconds(1));
+                    await Task.Delay(TimeSpan.FromSeconds(10));
                 }
             }
         });
     }
-
 }

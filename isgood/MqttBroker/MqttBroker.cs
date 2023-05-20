@@ -3,16 +3,16 @@ namespace isgood;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
+
 using MQTTnet;
 using MQTTnet.Server;
 using MQTTnet.Internal;
 using Newtonsoft.Json;
 
-internal class MqttBroker
+public class MqttBroker
 {
     private MqttServer mqttBroker;
     private Timer? bestBeforeTimeout;
@@ -145,9 +145,9 @@ internal class MqttBroker
                 Product matchedProduct = Products.First(e => e.Barcode == product.Barcode);
                 matchedProduct.Ready = true;
 
-                Program.DatabaseQueue.Enqueue(matchedProduct);
+                Program.APIQueue.Enqueue(matchedProduct);
                 Products.Remove(matchedProduct);
-                Console.WriteLine($"+ embeddedBroker: Removed product with barcode '{product.Barcode}' from working list and queued it for db insertion");
+                Console.WriteLine($"+ embeddedBroker: Removed product with barcode '{product.Barcode}' from working list and queued it for API fulfillment");
             }
         }
         else
