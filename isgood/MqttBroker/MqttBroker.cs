@@ -113,11 +113,20 @@ public class MqttBroker
         };
     }
 
-    public async Task Start()
+    public async Task Start(CancellationToken cancellationToken)
     {
         if (mqttBroker != null)
         {
             await mqttBroker.StartAsync();
+
+            while (!cancellationToken.IsCancellationRequested)
+            {
+                await Task.Delay(TimeSpan.FromSeconds(1), cancellationToken);
+            }
+
+            // Stop the MQTT server
+            await mqttBroker.StopAsync();
+            mqttBroker.Dispose();
         }
     }
 
