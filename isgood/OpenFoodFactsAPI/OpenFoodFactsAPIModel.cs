@@ -1,4 +1,4 @@
-namespace isgood;
+namespace isgood.OpenFoodFactsAPI;
 
 using Newtonsoft.Json;
 
