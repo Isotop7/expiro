@@ -2,6 +2,7 @@
 
 using System;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Collections.Concurrent;
 
@@ -18,6 +19,7 @@ public class Program
     {
         get;
     } = new ConcurrentQueue<Product>();
+    private static CancellationTokenSource _cancellationTokenSource { get; } = new CancellationTokenSource();
 
     static async Task Main(string[] args)
     {
@@ -49,17 +51,37 @@ public class Program
         if (_appConfiguration.MqttConfiguration.UseEmbedded == true)
         {
             Console.WriteLine("+ Starting embedded mqtt broker");
-            MqttBroker embeddedBroker = new(_appConfiguration.MqttConfiguration);
-            embeddedBroker.Start();
+            Task embeddedBrokerTask = Task.Run(() => StartEmbeddedBrokerAsync());
             Console.WriteLine("+ isgood: embeddedBroker started");
 
-            DatabaseWorkerService databaseWorkerService = new();
-            databaseWorkerService.Start();
+            Console.WriteLine("+ isgood: Starting DatabaseWorkerService");
+            Task databaseWorkerServiceTask = Task.Run(() => StartDatabaseWorkerService());
             Console.WriteLine("+ isgood: DatabaseWorkerService started");
 
-            APIWorkerService apiWorkerService = new(_appConfiguration);
-            apiWorkerService.Start();
+            Console.WriteLine("+ isgood: Starting APIWorkerServoce");
+            Task apiWorkerServiceTask = Task.Run(() => StartAPIWorkerService());
             Console.WriteLine("+ isgood: APIWorkerService started");
+
+            Console.WriteLine("+ isgood: Press CTRL+C to stop all tasks");
+            Console.CancelKeyPress += (sender, eventArgs) =>
+            {
+                eventArgs.Cancel = true;
+                _cancellationTokenSource.Cancel();
+            };
+
+            try
+            {
+                // Wait for the worker services to complete or cancellation signal
+                await Task.WhenAny(embeddedBrokerTask, databaseWorkerServiceTask, apiWorkerServiceTask, Task.Delay(Timeout.Infinite, _cancellationTokenSource.Token));
+            }
+            catch (OperationCanceledException)
+            {
+                Console.WriteLine("+ isgood: Cancellation was requestes. Shutting down services");
+            }
+
+            _cancellationTokenSource.Cancel();
+            await Task.WhenAll(embeddedBrokerTask, apiWorkerServiceTask, databaseWorkerServiceTask);
+
         }
         else
         {
@@ -67,4 +89,28 @@ public class Program
             Console.WriteLine($"+ Connecting to mqtt broker '{brokerUrl}' ...");
         }
     }
+
+    private static async Task StartEmbeddedBrokerAsync()
+    {
+        if (_appConfiguration != null)
+        {
+            MqttBroker embeddedBroker = new MqttBroker(_appConfiguration.MqttConfiguration);
+            await embeddedBroker.Start(_cancellationTokenSource.Token);
+        }
+    }
+
+    private static async Task StartAPIWorkerService()
+        {
+            if (_appConfiguration != null)
+            {
+                APIWorkerService apiWorkerService = new APIWorkerService(_appConfiguration);
+                await apiWorkerService.StartAsync(_cancellationTokenSource.Token);
+            }
+        }
+
+        private static async Task StartDatabaseWorkerService()
+        {
+            DatabaseWorkerService databaseWorkerService = new DatabaseWorkerService();
+            await databaseWorkerService.StartAsync(_cancellationTokenSource.Token);
+        }
 }
