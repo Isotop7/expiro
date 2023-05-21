@@ -1,6 +1,7 @@
 namespace isgood;
 
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 
 internal class APIWorkerService
@@ -11,17 +12,19 @@ internal class APIWorkerService
         _appConfiguration = appConfiguration;
     }
 
-    public async Task Start()
+    public async Task StartAsync(CancellationToken cancellationToken)
     {
-        await Task.Run(async () =>
-        {
-            OpenFoodFactsAPIController openFoodFactsAPIController = new(AppConfiguration.OpenFoodFactsApiUrl);
+        OpenFoodFactsAPIController openFoodFactsAPIController = new(AppConfiguration.OpenFoodFactsApiUrl);
 
-            while (true)
+        while (!cancellationToken.IsCancellationRequested)
+        {
+            using (var dbContext = new AppDbContext())
             {
-                if (Program.APIQueue.TryDequeue(out Product? product))
+                while (true)
                 {
-                    if (product == null)
+                    if (Program.APIQueue.TryDequeue(out Product? product))
+                    {
+                        if (product == null)
                         {
                             throw new FormatException("Dequeued invalid object");
                         }
@@ -35,10 +38,11 @@ internal class APIWorkerService
                             Console.WriteLine($"+ APIWorkerService: Enqueuing element with barcode '{product.Barcode}' for database insertion");
                             Program.DatabaseQueue.Enqueue(product);
                         }
-                }
+                    }
 
-                await Task.Delay(TimeSpan.FromSeconds(10));
+                    await Task.Delay(TimeSpan.FromSeconds(10), cancellationToken);
+                }
             }
-        });
+        }
     }
 }

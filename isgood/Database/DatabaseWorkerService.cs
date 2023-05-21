@@ -1,13 +1,14 @@
 namespace isgood;
 
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 
 public class DatabaseWorkerService
 {
-    public async Task Start()
+    public async Task StartAsync(CancellationToken cancellationToken)
     {
-        await Task.Run(async () =>
+        while (!cancellationToken.IsCancellationRequested)
         {
             using (var dbContext = new AppDbContext())
             {
@@ -24,12 +25,14 @@ public class DatabaseWorkerService
                             Console.WriteLine($"+ DatabaseWorkerService: Dequeued element with barcode '{product.Barcode}' and saving it to database");
                             dbContext.Products.Add(product);
                             await dbContext.SaveChangesAsync();
+                            
+                            await Task.Delay(TimeSpan.FromSeconds(1), cancellationToken);
                         }
                     }
 
-                    await Task.Delay(TimeSpan.FromSeconds(10));
+                    await Task.Delay(TimeSpan.FromSeconds(10), cancellationToken);
                 }
             }
-        });
+        }
     }
 }
