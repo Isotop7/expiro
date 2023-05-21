@@ -7,6 +7,9 @@ using System.Threading.Tasks;
 using System.Collections.Concurrent;
 
 using Microsoft.Extensions.Configuration;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.Hosting;
 
 using isgood.Models;
 using isgood.Configuration;
@@ -54,6 +57,10 @@ public class Program
             System.Environment.Exit(1);
         }
 
+       Console.WriteLine("+ isgood: Starting WebUI");
+       Task webUITask = Task.Run(() => StartWebUI());
+       Console.WriteLine("+ isgood: Started WebUI");
+
         if (_appConfiguration.MqttConfiguration.UseEmbedded == true)
         {
             Console.WriteLine("+ Starting embedded mqtt broker");
@@ -64,7 +71,7 @@ public class Program
             Task databaseWorkerServiceTask = Task.Run(() => StartDatabaseWorkerService());
             Console.WriteLine("+ isgood: DatabaseWorkerService started");
 
-            Console.WriteLine("+ isgood: Starting APIWorkerServoce");
+            Console.WriteLine("+ isgood: Starting APIWorkerService");
             Task apiWorkerServiceTask = Task.Run(() => StartAPIWorkerService());
             Console.WriteLine("+ isgood: APIWorkerService started");
 
@@ -106,17 +113,32 @@ public class Program
     }
 
     private static async Task StartAPIWorkerService()
+    {
+        if (_appConfiguration != null)
         {
-            if (_appConfiguration != null)
-            {
-                APIWorkerService apiWorkerService = new APIWorkerService(_appConfiguration);
-                await apiWorkerService.StartAsync(_cancellationTokenSource.Token);
-            }
+            APIWorkerService apiWorkerService = new APIWorkerService(_appConfiguration);
+            await apiWorkerService.StartAsync(_cancellationTokenSource.Token);
         }
+    }
 
-        private static async Task StartDatabaseWorkerService()
-        {
-            DatabaseWorkerService databaseWorkerService = new DatabaseWorkerService();
-            await databaseWorkerService.StartAsync(_cancellationTokenSource.Token);
-        }
+    private static async Task StartDatabaseWorkerService()
+    {
+        DatabaseWorkerService databaseWorkerService = new DatabaseWorkerService();
+        await databaseWorkerService.StartAsync(_cancellationTokenSource.Token);
+    }
+
+    private static async Task StartWebUI()
+    {
+         // Start the Blazor Web UI from the 'WebUI' directory
+        var webUiPath = Path.Combine(Directory.GetCurrentDirectory(), "WebUI");
+        var webUiHost = new WebHostBuilder()
+            .UseKestrel(options =>
+            {
+                options.ListenLocalhost(4040);
+            })
+            .UseContentRoot(webUiPath)
+            .UseStartup<isgood.WebUI.Startup>()
+            .Build();
+        await webUiHost.RunAsync(_cancellationTokenSource.Token);
+    }
 }
