@@ -1,4 +1,4 @@
-namespace isgood;
+namespace isgood.Models;
 
 using System;
 using System.ComponentModel.DataAnnotations;

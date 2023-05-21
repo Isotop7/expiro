@@ -1,4 +1,4 @@
-namespace isgood;
+namespace isgood.Mqtt;
 
 using System;
 using MQTTnet.Diagnostics;

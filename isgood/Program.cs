@@ -8,6 +8,12 @@ using System.Collections.Concurrent;
 
 using Microsoft.Extensions.Configuration;
 
+using isgood.Models;
+using isgood.Configuration;
+using isgood.Mqtt;
+using isgood.OpenFoodFactsAPI;
+using isgood.Database;
+
 public class Program
 {
     private static AppConfiguration? _appConfiguration;

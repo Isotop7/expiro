@@ -1,4 +1,4 @@
-namespace isgood;
+namespace isgood.Configuration;
 
 using System;
 
