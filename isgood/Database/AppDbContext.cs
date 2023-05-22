@@ -1,8 +1,8 @@
-namespace isgood.Database;
-
 using Microsoft.EntityFrameworkCore;
 
 using isgood.Models;
+
+namespace isgood.Database;
 
 public class AppDbContext : DbContext
 {

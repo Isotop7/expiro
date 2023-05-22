@@ -1,6 +1,6 @@
-namespace isgood.OpenFoodFactsAPI;
-
 using Newtonsoft.Json;
+
+namespace isgood.OpenFoodFactsAPI;
 
 public class APIProduct
 {

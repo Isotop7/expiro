@@ -1,5 +1,3 @@
-namespace isgood.OpenFoodFactsAPI;
-
 using System;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -7,6 +5,8 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 
 using isgood.Models;
+
+namespace isgood.OpenFoodFactsAPI;
 
 internal class OpenFoodFactsAPIController
 {

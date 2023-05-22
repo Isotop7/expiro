@@ -1,5 +1,3 @@
-namespace isgood.Mqtt;
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,6 +12,8 @@ using Newtonsoft.Json;
 
 using isgood.Models;
 using isgood.Configuration;
+
+namespace isgood.Mqtt;
 
 public class MqttBroker
 {
