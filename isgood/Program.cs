@@ -38,7 +38,7 @@ public class Program
             │└─┐│ ┬│ ││ │ ││
             ┴└─┘└─┘└─┘└─┘─┴┘
         ");
-        Console.WriteLine("+ Starting isgood");
+        Console.WriteLine($"+ Starting isgood with config from directory {Directory.GetCurrentDirectory()}");
 
         try 
         {
@@ -137,6 +137,10 @@ public class Program
         builder.Services.AddHealthChecks();
 
         builder.Services.AddDbContext<AppDbContext>();
+        if (_appConfiguration != null)
+        {
+            builder.Services.AddSingleton<ProductConfiguration>(_appConfiguration.ProductConfiguration);
+        }
 
         WebApplication app = builder.Build();
 
