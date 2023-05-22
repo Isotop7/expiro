@@ -4,10 +4,10 @@
     ViewData["Title"] = "Products";
 }
 
-<div class="text-center">
-    <h1>Products</h1>
+<div>
+    <h2>Products</h2>
 
-    <table class="table">
+    <table>
         <thead>
             <tr>
                 <th>
@@ -21,6 +21,9 @@
                 </th>
                 <th>
                     @Html.DisplayNameFor(model => model.Products[0].BestBefore)
+                </th>
+                <th>
+                    Options
                 </th>
             </tr>
         </thead>
