@@ -23,9 +23,9 @@ public class IndexModel : PageModel
 
     public async Task OnGetAsync()
     {
-        if (_appDbContext.Products != null)
+        if (_appDbContext.Product != null)
         {
-            Products = await _appDbContext.Products.ToListAsync();
+            Products = await _appDbContext.Product.ToListAsync();
         }
     }
 }
