@@ -1,7 +1,8 @@
-namespace isgood.Mqtt;
-
 using System;
+
 using MQTTnet.Diagnostics;
+
+namespace isgood.Mqtt;
 
 internal class MqttBrokerLogger : IMqttNetLogger
     {
