@@ -82,7 +82,14 @@
                     @Html.DisplayNameFor(model => model.Product.BestBefore)
                 </td>
                 <td>
-                    @Html.DisplayFor(model => model.Product.BestBefore)
+                    @if (Model.Product.BestBefore < DateTime.Now)
+                    {
+                        <mark>@Html.DisplayFor(model => model.Product.BestBefore)</mark>
+                    }
+                    else
+                    {
+                        @Html.DisplayFor(model => model.Product.BestBefore)
+                    }
                 </td>
             </tr>
 
