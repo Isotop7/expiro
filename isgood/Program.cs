@@ -7,9 +7,10 @@ using System.Threading.Tasks;
 using System.Collections.Concurrent;
 
 using Microsoft.Extensions.Configuration;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Hosting;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.DependencyInjection;
 
 using isgood.Models;
 using isgood.Configuration;
@@ -57,13 +58,13 @@ public class Program
             System.Environment.Exit(1);
         }
 
-       Console.WriteLine("+ isgood: Starting WebUI");
-       Task webUITask = Task.Run(() => StartWebUI());
-       Console.WriteLine("+ isgood: Started WebUI");
+        Console.WriteLine("+ isgood: Starting WebUI");
+        Task webUITask = Task.Run(() => StartWebUI());
+        Console.WriteLine("+ isgood: WebUI started");
 
         if (_appConfiguration.MqttConfiguration.UseEmbedded == true)
         {
-            Console.WriteLine("+ Starting embedded mqtt broker");
+            Console.WriteLine("+ isgood: Starting embedded mqtt broker");
             Task embeddedBrokerTask = Task.Run(() => StartEmbeddedBrokerAsync());
             Console.WriteLine("+ isgood: embeddedBroker started");
 
@@ -129,16 +130,32 @@ public class Program
 
     private static async Task StartWebUI()
     {
-         // Start the Blazor Web UI from the 'WebUI' directory
-        var webUiPath = Path.Combine(Directory.GetCurrentDirectory(), "WebUI");
-        var webUiHost = new WebHostBuilder()
-            .UseKestrel(options =>
-            {
-                options.ListenLocalhost(4040);
-            })
-            .UseContentRoot(webUiPath)
-            .UseStartup<isgood.WebUI.Startup>()
-            .Build();
-        await webUiHost.RunAsync(_cancellationTokenSource.Token);
+        WebApplicationBuilder builder = WebApplication.CreateBuilder();
+        
+        // Add services to the container.
+        builder.Services.AddRazorPages();
+        builder.Services.AddHealthChecks();
+
+        WebApplication app = builder.Build();
+
+        // Configure the HTTP request pipeline.
+        if (!app.Environment.IsDevelopment())
+        {
+            app.UseExceptionHandler("/Error");
+            // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+            app.UseHsts();
+        }
+
+        app.UseHttpsRedirection();
+        app.UseStaticFiles();
+
+        app.UseRouting();
+
+        app.UseAuthorization();
+
+        app.MapHealthChecks("/healthz");
+        app.MapRazorPages();
+
+        await app.RunAsync();
     }
 }
