@@ -1,23 +1,27 @@
 ﻿<!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - web</title>
-</head>
-<body>
-    <div class="container">
-        <main role="main">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>@ViewData["Title"] - web</title>
+        <link rel="stylesheet" href="/css/pico.classless.css">
+    </head>
+    <body>
+        <main>
+            <div>
+                <h2>isgood</h2>
+                <blockquote>basic product tracker using MQTT and an Arduino</blockquote>
+            </div>
+
             @RenderBody()
         </main>
-    </div>
 
-    <footer>
-        <div class="container">
-            &copy; 2023</a>
-        </div>
-    </footer>
+        <footer>
+            <div>
+                &copy; 2023</a>
+            </div>
+        </footer>
 
-    @await RenderSectionAsync("Scripts", required: false)
-</body>
+        @await RenderSectionAsync("Scripts", required: false)
+    </body>
 </html>

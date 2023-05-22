@@ -2,6 +2,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 using isgood.Models;
 
@@ -10,10 +11,12 @@ namespace isgood.Pages.Products
     public class EditModel : PageModel
     {
         private readonly isgood.Database.AppDbContext _context;
+        private readonly ILogger<EditModel> _logger;
 
-        public EditModel(isgood.Database.AppDbContext context)
+        public EditModel(isgood.Database.AppDbContext context, ILogger<EditModel> logger)
         {
             _context = context;
+            _logger = logger;
         }
 
         [BindProperty]
