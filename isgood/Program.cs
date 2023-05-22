@@ -1,6 +1,4 @@
-﻿namespace isgood;
-
-using System;
+﻿using System;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
@@ -17,6 +15,8 @@ using isgood.Configuration;
 using isgood.Mqtt;
 using isgood.OpenFoodFactsAPI;
 using isgood.Database;
+
+namespace isgood;
 
 public class Program
 {
@@ -135,6 +135,8 @@ public class Program
         // Add services to the container.
         builder.Services.AddRazorPages();
         builder.Services.AddHealthChecks();
+
+        builder.Services.AddDbContext<AppDbContext>();
 
         WebApplication app = builder.Build();
 
