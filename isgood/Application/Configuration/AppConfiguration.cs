@@ -1,6 +1,6 @@
-namespace isgood.Configuration;
-
 using System;
+
+namespace isgood.Configuration;
 
 internal class AppConfiguration {
     

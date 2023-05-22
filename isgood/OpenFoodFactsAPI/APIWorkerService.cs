@@ -1,5 +1,3 @@
-namespace isgood.OpenFoodFactsAPI;
-
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -7,6 +5,8 @@ using System.Threading.Tasks;
 using isgood.Configuration;
 using isgood.Database;
 using isgood.Models;
+
+namespace isgood.OpenFoodFactsAPI;
 
 internal class APIWorkerService
 {
