@@ -12,11 +12,13 @@ namespace isgood.Pages.Products
     {
         private readonly isgood.Database.AppDbContext _context;
         private readonly ILogger<DeleteModel> _logger;
+        public readonly isgood.Configuration.ProductConfiguration ProductConfiguration;
 
-        public DeleteModel(isgood.Database.AppDbContext context, ILogger<DeleteModel> logger)
+        public DeleteModel(isgood.Database.AppDbContext context, ILogger<DeleteModel> logger, isgood.Configuration.ProductConfiguration productConfiguration)
         {
             _context = context;
             _logger = logger;
+            ProductConfiguration = productConfiguration;
         }
 
         [BindProperty]

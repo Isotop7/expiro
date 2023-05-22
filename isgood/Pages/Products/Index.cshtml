@@ -41,7 +41,7 @@
                         @Html.DisplayFor(modelItem => item.Categories)
                     </td>
                     <td>
-                        @if (item.BestBefore < DateTime.Now)
+                        @if (item.BestBefore < DateTime.Now.AddDays(Convert.ToDouble(Model.ProductConfiguration.BestBeforeWarnDelta)))
                         {
                             <mark>@Html.DisplayFor(modelItem => item.BestBefore)</mark>
                         }

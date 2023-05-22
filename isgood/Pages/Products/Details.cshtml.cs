@@ -11,12 +11,13 @@ namespace isgood.Pages.Products
     {
         private readonly isgood.Database.AppDbContext _context;
         private readonly ILogger<DetailsModel> _logger;
+        public readonly isgood.Configuration.ProductConfiguration ProductConfiguration;
 
-
-        public DetailsModel(isgood.Database.AppDbContext context, ILogger<DetailsModel> logger)
+        public DetailsModel(isgood.Database.AppDbContext context, ILogger<DetailsModel> logger, isgood.Configuration.ProductConfiguration productConfiguration)
         {
             _context = context;
             _logger = logger;
+            ProductConfiguration = productConfiguration;
         }
 
       public Product Product { get; set; } = new();

@@ -82,7 +82,7 @@
                     @Html.DisplayNameFor(model => model.Product.BestBefore)
                 </td>
                 <td>
-                    @if (Model.Product.BestBefore < DateTime.Now)
+                    @if (Model.Product.BestBefore < DateTime.Now.AddDays(Convert.ToDouble(Model.ProductConfiguration.BestBeforeWarnDelta)))
                     {
                         <mark>@Html.DisplayFor(model => model.Product.BestBefore)</mark>
                     }
