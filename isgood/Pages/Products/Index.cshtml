@@ -41,7 +41,14 @@
                         @Html.DisplayFor(modelItem => item.Categories)
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.BestBefore)
+                        @if (item.BestBefore < DateTime.Now)
+                        {
+                            <mark>@Html.DisplayFor(modelItem => item.BestBefore)</mark>
+                        }
+                        else
+                        {
+                            @Html.DisplayFor(modelItem => item.BestBefore)
+                        }
                     </td>
                     <td>
                         <a asp-page="./Edit" asp-route-Id="@item.Id">Edit</a> |
