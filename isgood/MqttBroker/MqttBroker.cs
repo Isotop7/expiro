@@ -120,16 +120,24 @@ public class MqttBroker
     {
         if (mqttBroker != null)
         {
-            await mqttBroker.StartAsync();
+            try {
+                await mqttBroker.StartAsync();
 
-            while (!cancellationToken.IsCancellationRequested)
-            {
-                await Task.Delay(TimeSpan.FromSeconds(1), cancellationToken);
+                while (!cancellationToken.IsCancellationRequested)
+                {
+                    await Task.Delay(TimeSpan.FromSeconds(1), cancellationToken);
+                }
+
+                // Stop the MQTT server
+                await mqttBroker.StopAsync();
+                mqttBroker.Dispose();
             }
-
-            // Stop the MQTT server
-            await mqttBroker.StopAsync();
-            mqttBroker.Dispose();
+            catch (TaskCanceledException)
+            {
+                Console.WriteLine($"+ embeddedBroker: Cancellation was requested");
+                await mqttBroker.StopAsync();
+                mqttBroker.Dispose();
+            }
         }
     }
 

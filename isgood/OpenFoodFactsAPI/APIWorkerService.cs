@@ -22,30 +22,37 @@ internal class APIWorkerService
 
         while (!cancellationToken.IsCancellationRequested)
         {
-            using (var dbContext = new AppDbContext())
+            try
             {
-                while (true)
+                using (var dbContext = new AppDbContext())
                 {
-                    if (Program.APIQueue.TryDequeue(out Product? product))
+                    while (true)
                     {
-                        if (product == null)
+                        if (Program.APIQueue.TryDequeue(out Product? product))
                         {
-                            throw new FormatException("Dequeued invalid object");
-                        }
-                        else
-                        {
-                            Console.WriteLine($"+ APIWorkerService: Dequeued element with barcode '{product.Barcode}'");
-                            
-                            Console.WriteLine($"+ APIWorkerService: Getting facts for product with barcode '{product.Barcode}'");
-                            product = await openFoodFactsAPIController.GetProductFacts(product);
+                            if (product == null)
+                            {
+                                throw new FormatException("Dequeued invalid object");
+                            }
+                            else
+                            {
+                                Console.WriteLine($"+ APIWorkerService: Dequeued element with barcode '{product.Barcode}'");
+                                
+                                Console.WriteLine($"+ APIWorkerService: Getting facts for product with barcode '{product.Barcode}'");
+                                product = await openFoodFactsAPIController.GetProductFacts(product);
 
-                            Console.WriteLine($"+ APIWorkerService: Enqueuing element with barcode '{product.Barcode}' for database insertion");
-                            Program.DatabaseQueue.Enqueue(product);
+                                Console.WriteLine($"+ APIWorkerService: Enqueuing element with barcode '{product.Barcode}' for database insertion");
+                                Program.DatabaseQueue.Enqueue(product);
+                            }
                         }
+
+                        await Task.Delay(TimeSpan.FromSeconds(10), cancellationToken);
                     }
-
-                    await Task.Delay(TimeSpan.FromSeconds(10), cancellationToken);
                 }
+            }
+            catch (TaskCanceledException)
+            {
+                Console.WriteLine($"+ APIWorkerService : Cancellation was requested");
             }
         }
     }

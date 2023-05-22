@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
 
-namespace WebUI.Pages;
+namespace isgood.Pages;
 
 public class IndexModel : PageModel
 {
