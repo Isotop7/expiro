@@ -5,11 +5,13 @@ namespace isgood.Configuration;
 internal class AppConfiguration {
     
     public MqttConfiguration MqttConfiguration { get; set; }
+    public ProductConfiguration ProductConfiguration { get; set; }
     public static readonly string OpenFoodFactsApiUrl = "https://world.openfoodfacts.org/api/v0/product";
     public static readonly string BarcodeRegex = "^\\d{13}$";
 
     public AppConfiguration() {
         MqttConfiguration = new();
+        ProductConfiguration = new();
     }
 
     public void Validate() 
