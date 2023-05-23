@@ -47,6 +47,11 @@ namespace isgood.Pages.Products
                 return Page();
             }
 
+            if (_context.Product == null)
+            {
+                return BadRequest();
+            }
+
             var product = await _context.Product.FindAsync(id);
 
             if (product == null)

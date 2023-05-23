@@ -25,9 +25,6 @@ public class Product
     [JsonProperty("bestBefore")]
     public DateTime BestBefore { get; set; }
 
-    [NotMapped]
-    public bool Ready;
-
     public Product() {
         Barcode = string.Empty;
         ProductName = string.Empty;
@@ -35,6 +32,5 @@ public class Product
         Countries = string.Empty;
         ImageUrl = string.Empty;
         BestBefore = DateTime.MaxValue;
-        Ready = false;
     }
 }

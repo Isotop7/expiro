@@ -27,9 +27,11 @@ public class DatabaseWorkerService
                             else
                             {
                                 Console.WriteLine($"+ DatabaseWorkerService: Dequeued element with barcode '{product.Barcode}' and saving it to database");
-                                dbContext.Product.Add(product);
-                                await dbContext.SaveChangesAsync();
-                                
+                                if (dbContext.Product != null)
+                                {
+                                    dbContext.Product.Add(product);
+                                    await dbContext.SaveChangesAsync();
+                                }
                                 await Task.Delay(TimeSpan.FromSeconds(1), cancellationToken);
                             }
                         }
