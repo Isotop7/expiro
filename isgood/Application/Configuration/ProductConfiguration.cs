@@ -7,4 +7,9 @@ public class ProductConfiguration
     public ProductConfiguration()
     {
     }
+
+    public bool IsValid()
+    {
+        return true;
+    }
 }
