@@ -7,56 +7,65 @@
 <div>
     <h2>Products</h2>
 
-    <table>
-        <thead>
-            <tr>
-                <th>
-                    @Html.DisplayNameFor(model => model.Products[0].Barcode)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Products[0].ProductName)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Products[0].Categories)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Products[0].BestBefore)
-                </th>
-                <th>
-                    Options
-                </th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in Model.Products)
-            {
+    <figure>
+        <table role="grid">
+            <thead>
                 <tr>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Barcode)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.ProductName)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Categories)
-                    </td>
-                    <td>
-                        @if (item.BestBefore < DateTime.Now.AddDays(Convert.ToDouble(Model.ProductConfiguration.BestBeforeWarnDelta)))
-                        {
-                            <mark>@Html.DisplayFor(modelItem => item.BestBefore)</mark>
-                        }
-                        else
-                        {
-                            @Html.DisplayFor(modelItem => item.BestBefore)
-                        }
-                    </td>
-                    <td>
-                        <a asp-page="./Edit" asp-route-Id="@item.Id">Edit</a> |
-                        <a asp-page="./Details" asp-route-id="@item.Id">Details</a> |
-                        <a asp-page="./Delete" asp-route-id="@item.Id">Delete</a>
-                    </td>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Products[0].Barcode)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Products[0].ProductName)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Products[0].Categories)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Products[0].BestBefore)
+                    </th>
+                    <th>
+                        Options
+                    </th>
                 </tr>
-            }
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.Products)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Barcode)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.ProductName)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Categories)
+                        </td>
+                        <td>
+                            @if (item.BestBefore <
+                           DateTime.Now.AddDays(Convert.ToDouble(Model.ProductConfiguration.BestBeforeWarnDelta)))
+                            {
+                                <mark>@Html.DisplayFor(modelItem => item.BestBefore)</mark>
+                            }
+                            else
+                            {
+                                @Html.DisplayFor(modelItem => item.BestBefore)
+                            }
+                        </td>
+                        <td>
+                            <a asp-page="./Edit" asp-route-id="@item.Id">
+                                <button>Edit</button>
+                            </a>
+                            <a asp-page="./Details" asp-route-id="@item.Id">
+                                <button>Details</button>
+                            </a>
+                            <a asp-page="./Delete" asp-route-id="@item.Id">
+                                <button>Delete</button>
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </figure>
 </div>
