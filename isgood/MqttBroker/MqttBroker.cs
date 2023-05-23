@@ -106,7 +106,7 @@ public class MqttBroker
                 throw new InvalidCastException("Product could not be deserialized");
             }
 
-            if (product.Barcode != null && Regex.IsMatch(product.Barcode, AppConfiguration.BarcodeRegex) == false)
+            if (product.Barcode != null && Regex.IsMatch(product.Barcode, AppConfiguration.BarcodeRegex, new(), TimeSpan.FromSeconds(30)) == false)
             {
                 throw new InvalidOperationException("Published barcode does not match format");
             }
