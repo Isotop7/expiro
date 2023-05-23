@@ -42,7 +42,7 @@ internal class APIWorkerService
                                 product = await openFoodFactsAPIController.GetProductFacts(product);
 
                                 Console.WriteLine($"+ APIWorkerService: Enqueuing element with barcode '{product.Barcode}' for database insertion");
-                                Program.DatabaseQueue.Enqueue(product);
+                                Program.DatabaseQueue.Enqueue(new(isgood.Database.DatabaseQueueElementAction.INSERT, product));
                             }
                         }
 
