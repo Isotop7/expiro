@@ -125,7 +125,8 @@ public class MqttBroker
 
                 while (!cancellationToken.IsCancellationRequested)
                 {
-                    await Task.Delay(TimeSpan.FromSeconds(1), cancellationToken);
+                    //TODO: Do we really need to do this here?
+                    await Task.Delay(TimeSpan.FromSeconds(10), cancellationToken);
                 }
 
                 // Stop the MQTT server
