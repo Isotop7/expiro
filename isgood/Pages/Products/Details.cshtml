@@ -9,93 +9,100 @@
 
 <div>
     <h4>Product</h4>
-    <figure>
-        <img
-            src="@Html.DisplayFor(model => model.Product.ImageUrl)"
-        />
-    </figure>
-    <hr />
 
-    <table>
-        <thead>
-            <tr>
-                <th>
-                    Property
-                </th>
-                <th>
-                    Value
-                </th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>
-                    @Html.DisplayNameFor(model => model.Product.Id)
-                </td>
-                <td>
-                    @Html.DisplayFor(model => model.Product.Id)
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    @Html.DisplayNameFor(model => model.Product.Barcode)
-                </td>
-                <td>
-                    @Html.DisplayFor(model => model.Product.Barcode)
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    @Html.DisplayNameFor(model => model.Product.ProductName)
-                </td>
-                <td>
-                    @Html.DisplayFor(model => model.Product.ProductName)
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    @Html.DisplayNameFor(model => model.Product.Categories)
-                </td>
-                <td>
-                    @Html.DisplayFor(model => model.Product.Categories)
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    @Html.DisplayNameFor(model => model.Product.Countries)
-                </td>
-                <td>
-                    @Html.DisplayFor(model => model.Product.Countries)
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    @Html.DisplayNameFor(model => model.Product.ImageUrl)
-                </td>
-                <td>
-                    @Html.DisplayFor(model => model.Product.ImageUrl)
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    @Html.DisplayNameFor(model => model.Product.BestBefore)
-                </td>
-                <td>
-                    @if (Model.Product.BestBefore < DateTime.Now.AddDays(Convert.ToDouble(Model.ProductConfiguration.BestBeforeWarnDelta)))
-                    {
-                        <mark>@Html.DisplayFor(model => model.Product.BestBefore)</mark>
-                    }
-                    else
-                    {
-                        @Html.DisplayFor(model => model.Product.BestBefore)
-                    }
-                </td>
-            </tr>
+    <div class="grid">
+        <div>
+            <figure>
+                <img
+                    src="@Html.DisplayFor(model => model.Product.ImageUrl)"
+                />
+            </figure>
+        </div>
 
-        </tbody>
-    </table>
+        <div>
+            <table role="grid">
+                <thead>
+                    <tr>
+                        <th>
+                            Property
+                        </th>
+                        <th>
+                            Value
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            @Html.DisplayNameFor(model => model.Product.Id)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(model => model.Product.Id)
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            @Html.DisplayNameFor(model => model.Product.Barcode)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(model => model.Product.Barcode)
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            @Html.DisplayNameFor(model => model.Product.ProductName)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(model => model.Product.ProductName)
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            @Html.DisplayNameFor(model => model.Product.Categories)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(model => model.Product.Categories)
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            @Html.DisplayNameFor(model => model.Product.Countries)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(model => model.Product.Countries)
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            @Html.DisplayNameFor(model => model.Product.BestBefore)
+                        </td>
+                        <td>
+                            @if (Model.Product.BestBefore < DateTime.Now.AddDays(Convert.ToDouble(Model.ProductConfiguration.BestBeforeWarnDelta)))
+                            {
+                                <mark>@Html.DisplayFor(model => model.Product.BestBefore)</mark>
+                            }
+                            else
+                            {
+                                @Html.DisplayFor(model => model.Product.BestBefore)
+                            }
+                        </td>
+                    </tr>
+
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>
-<div>
-    <a asp-page="./Edit" asp-route-id="@Model.Product?.Id">Edit</a> |
-    <a asp-page="./Index">Back to List</a>
+
+<div class="grid">
+    <div>
+        <a asp-page="./Edit" asp-route-id="@Model.Product?.Id">
+            <button>Edit</button>
+        </a>
+    </div>
+    <div>
+        <a asp-page="./Index">
+            <button>⏎ Back to List</button>
+        </a>
+    </div>
 </div>
