@@ -1,0 +1,28 @@
+{
+    "WebUIConfiguration": {
+        "Enabled": true
+    },
+    "ProductConfiguration": {
+        "BestBeforeWarnDelta": 2
+    },
+    "MqttConfiguration": {
+        "UseEmbedded": true,
+        "BrokerURL": "",
+        "BrokerPort": 1883,
+        "BrokerAuthEnabled": false,
+        "BrokerUsername": "",
+        "BrokerPassword": "",
+        "TopicsBarcode": "",
+        "TopicsBestBeforeSet": "",
+        "BestBeforeTimeout": 20
+    },
+    "NotificationConfiguration": {
+        "Enabled": true,
+        "IntervalInHours": 1,
+        "SmtpServerAddress": "",
+        "SmtpUsername": "",
+        "SmtpPassword": "",
+        "SmtpFromAddress": "",
+        "ToAddress": ""
+    }
+}
