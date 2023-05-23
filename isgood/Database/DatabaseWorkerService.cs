@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -14,35 +15,68 @@ public class DatabaseWorkerService
         {
             try
             {
-                using (var dbContext = new AppDbContext())
+                while (true)
                 {
-                    while (true)
+                    if (Program.DatabaseQueue.TryDequeue(out DatabaseQueueElement? databaseQueueElement))
                     {
-                        if (Program.DatabaseQueue.TryDequeue(out Product? product))
+                        if (databaseQueueElement == null)
                         {
-                            if (product == null)
+                            throw new FormatException("Dequeued invalid object");
+                        }
+                        else
+                        {
+                            Product product = databaseQueueElement.Product;
+                            switch(databaseQueueElement.DatabaseQueueElementAction)
                             {
-                                throw new FormatException("Dequeued invalid object");
-                            }
-                            else
-                            {
-                                Console.WriteLine($"+ DatabaseWorkerService: Dequeued element with barcode '{product.Barcode}' and saving it to database");
-                                if (dbContext.Product != null)
+                                case DatabaseQueueElementAction.INSERT:
                                 {
-                                    dbContext.Product.Add(product);
-                                    await dbContext.SaveChangesAsync();
+                                    Console.WriteLine($"+ DatabaseWorkerService: Dequeued element with barcode '{product.Barcode}' and saving it to database");
+                                    await InsertProduct(product, cancellationToken);
+                                    break;
                                 }
-                                await Task.Delay(TimeSpan.FromSeconds(1), cancellationToken);
+                                case DatabaseQueueElementAction.DELETE:
+                                {
+                                    Console.WriteLine($"+ DatabaseWorkerService: Dequeued element with barcode '{product.Barcode}' and removing it from database");
+                                    await RemoveProduct(product, cancellationToken);
+                                    break;
+                                }
                             }
                         }
-
-                        await Task.Delay(TimeSpan.FromSeconds(10), cancellationToken);
                     }
+
+                    await Task.Delay(TimeSpan.FromSeconds(10), cancellationToken);
                 }
             }
             catch (TaskCanceledException)
             {
                 Console.WriteLine($"+ DatabaseWorkerService: Cancellation was requested");
+            }
+        }
+    }
+
+    private async Task InsertProduct(Product product, CancellationToken cancellationToken)
+    {
+        using (var dbContext = new AppDbContext())
+        {
+            if (dbContext.Product != null)
+            {
+                dbContext.Product.Add(product);
+                await dbContext.SaveChangesAsync();
+                Console.WriteLine($"+ DatabaseWorkerService: Saved element with barcode '{product.Barcode}' to database");
+            }
+        }
+    }
+
+    private async Task RemoveProduct(Product product, CancellationToken cancellationToken)
+    {
+        using (var dbContext = new AppDbContext())
+        {
+            if (dbContext.Product != null)
+            {
+                Product matchingProduct = dbContext.Product.Where(p => p.Barcode == product.Barcode).First();
+                dbContext.Product.Remove(matchingProduct);
+                await dbContext.SaveChangesAsync();
+                Console.WriteLine($"+ DatabaseWorkerService: Removed element with barcode '{product.Barcode}' from database");
             }
         }
     }

@@ -36,80 +36,15 @@ public class MqttBroker
         {
             if (e.ApplicationMessage.Topic.Equals(mqttConfiguration.TopicBarcode))
             {
-                Product? product = new();
-                try
-                {
-                    string content = e.ApplicationMessage.ConvertPayloadToString().Trim() ?? string.Empty;
-                    if (content != null && content.Equals(string.Empty) == false)
-                    {
-                        product = JsonConvert.DeserializeObject<Product>(content);
-                    }
-                    else
-                    {
-                        throw new InvalidCastException("Payload was empty and could not be deserialized");
-                    }
-
-                    if (product == null)
-                    {
-                        throw new InvalidCastException("Product could not be deserialized");
-                    }
-
-                    if (product.Barcode != null && Regex.IsMatch(product.Barcode, AppConfiguration.BarcodeRegex) == false)
-                    {
-                        throw new InvalidOperationException("Published barcode does not match format");
-                    }
-
-                    int idx = Products.FindIndex(e => e.Barcode == product.Barcode);
-                    if (idx == -1)
-                    {
-                        Console.WriteLine($"+ embeddedBroker: New product with barcode '{product.Barcode}' published, starting timer with {mqttConfiguration.BestBeforeTimeout} seconds timeout ...");
-                    
-                        bestBeforeTimeout = new Timer(
-                            BestBeforeTimeoutTriggered, 
-                            product, 
-                            TimeSpan.FromSeconds(mqttConfiguration.BestBeforeTimeout), 
-                            Timeout.InfiniteTimeSpan
-                        );
-
-                        Products.Add(product);
-                    }
-                }
-                catch
-                {
-                    throw;
-                }
+                DispatchTopicBarcode(e, mqttConfiguration.BestBeforeTimeout);
             }
             else if (e.ApplicationMessage.Topic.Equals(mqttConfiguration.TopicBestBeforeSet))
             {
-                Product product = new();
-                try
-                {
-                    string content = e.ApplicationMessage.ConvertPayloadToString().Trim() ?? string.Empty;
-                    if (content is not null && content.Equals(string.Empty) == false)
-                    {
-                        product = JsonConvert.DeserializeObject<Product>(content) ?? new();
-                    }
-                    else
-                    {
-                        throw new InvalidCastException("Payload was empty and could not be deserialized");
-                    }
-                }
-                catch
-                {
-                    throw;
-                }
-
-                Console.WriteLine($"+ embeddedBroker: Best before date for product with barcode '{product.Barcode}' published, trying to update date with value '{product.BestBefore}'");
-
-                try
-                {
-                    Product matchedProduct = Products.First(e => e.Barcode == product.Barcode);
-                    matchedProduct.BestBefore = product.BestBefore;
-                }
-                catch (InvalidOperationException)
-                {
-                    Console.WriteLine($"+ embeddedBroker: Product with barcode '{product.Barcode}' cannot be updated, because it has to be published first");
-                }
+                DispatchTopicBestBeforeSet(e);
+            }
+            else if (e.ApplicationMessage.Topic.Equals(mqttConfiguration.TopicBarcodeRemove))
+            {
+                DispatchTopicBarcodeRemove(e);
             }
 
             return CompletedTask.Instance;
@@ -149,6 +84,110 @@ public class MqttBroker
             await mqttBroker.StopAsync();
             mqttBroker.Dispose();
         }
+    }
+
+    private void DispatchTopicBarcode(InterceptingPublishEventArgs ipea, int timerTimeout)
+    {
+        Product? product = new();
+        try
+        {
+            string content = ipea.ApplicationMessage.ConvertPayloadToString().Trim() ?? string.Empty;
+            if (content != null && content.Equals(string.Empty) == false)
+            {
+                product = JsonConvert.DeserializeObject<Product>(content);
+            }
+            else
+            {
+                throw new InvalidCastException("Payload was empty and could not be deserialized");
+            }
+
+            if (product == null)
+            {
+                throw new InvalidCastException("Product could not be deserialized");
+            }
+
+            if (product.Barcode != null && Regex.IsMatch(product.Barcode, AppConfiguration.BarcodeRegex) == false)
+            {
+                throw new InvalidOperationException("Published barcode does not match format");
+            }
+
+            int idx = Products.FindIndex(e => e.Barcode == product.Barcode);
+            if (idx == -1)
+            {
+                Console.WriteLine($"+ embeddedBroker: New product with barcode '{product.Barcode}' published, starting timer with {timerTimeout} seconds timeout ...");
+            
+                bestBeforeTimeout = new Timer(
+                    BestBeforeTimeoutTriggered, 
+                    product, 
+                    TimeSpan.FromSeconds(timerTimeout), 
+                    Timeout.InfiniteTimeSpan
+                );
+
+                Products.Add(product);
+            }
+        }
+        catch
+        {
+            throw;
+        }
+    }
+
+    private void DispatchTopicBestBeforeSet(InterceptingPublishEventArgs ipea)
+    {
+        Product product = new();
+        try
+        {
+            string content = ipea.ApplicationMessage.ConvertPayloadToString().Trim() ?? string.Empty;
+            if (content is not null && content.Equals(string.Empty) == false)
+            {
+                product = JsonConvert.DeserializeObject<Product>(content) ?? new();
+            }
+            else
+            {
+                throw new InvalidCastException("Payload was empty and could not be deserialized");
+            }
+        }
+        catch
+        {
+            throw;
+        }
+
+        Console.WriteLine($"+ embeddedBroker: Best before date for product with barcode '{product.Barcode}' published, trying to update date with value '{product.BestBefore}'");
+
+        try
+        {
+            Product matchedProduct = Products.First(e => e.Barcode == product.Barcode);
+            matchedProduct.BestBefore = product.BestBefore;
+        }
+        catch (InvalidOperationException)
+        {
+            Console.WriteLine($"+ embeddedBroker: Product with barcode '{product.Barcode}' cannot be updated, because it has to be published first");
+        }
+    }
+
+    private void DispatchTopicBarcodeRemove(InterceptingPublishEventArgs ipea)
+    {
+        Product product = new();
+        try
+        {
+            string content = ipea.ApplicationMessage.ConvertPayloadToString().Trim() ?? string.Empty;
+            if (content is not null && content.Equals(string.Empty) == false)
+            {
+                product = JsonConvert.DeserializeObject<Product>(content) ?? new();
+            }
+            else
+            {
+                throw new InvalidCastException("Payload was empty and could not be deserialized");
+            }
+        }
+        catch
+        {
+            throw;
+        }
+
+        Console.WriteLine($"+ embeddedBroker: Product with barcode '{product.Barcode}' published and enqueued for removal");
+
+        Program.DatabaseQueue.Enqueue(new(Database.DatabaseQueueElementAction.DELETE, product));
     }
 
     private void BestBeforeTimeoutTriggered(object? element)

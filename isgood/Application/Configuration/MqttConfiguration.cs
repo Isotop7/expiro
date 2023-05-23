@@ -11,6 +11,7 @@ public class MqttConfiguration
     public string? BrokerUsername { get; set; }
     public string? BrokerPassword { get; set; }
     public string TopicBarcode { get; set; }
+    public string TopicBarcodeRemove { get; set; }
     public string TopicBestBeforeSet { get; set; }
     public int BestBeforeTimeout { get; set; }
 
@@ -18,6 +19,7 @@ public class MqttConfiguration
     {
         TopicBarcode = "product/barcode";
         TopicBestBeforeSet = "product/best_before/set";
+        TopicBarcodeRemove = "product/barcode/remove";
         BestBeforeTimeout = 15;
     }
 
