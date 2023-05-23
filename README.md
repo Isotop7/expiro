@@ -4,7 +4,10 @@
     <img src="https://img.shields.io/github/license/Isotop7/isgood" alt="License" />
     <img src="https://img.shields.io/github/v/release/Isotop7/isgood" alt="Release" />
     <img src="https://sonarcloud.io/api/project_badges/measure?project=Isotop7_isgood&metric=alert_status" alt="SonarCloud" />
-    <img src="https://img.shields.io/github/workflow/status/Isotop7/isgood/CI" alt="CI" />
+    <img src="https://sonarcloud.io/api/project_badges/measure?project=Isotop7_isgood&metric=security_rating" alt="Sonarcloud security rating">
+    <img src="https://sonarcloud.io/api/project_badges/measure?project=Isotop7_isgood&metric=bugs" alt="Sonarcloud bugs">
+    <img src="https://sonarcloud.io/api/project_badges/measure?project=Isotop7_isgood&metric=code_smells" alt="Sonarcloud code smells">
+    <img src="https://img.shields.io/github/actions/workflow/status/Isotop7/isgood/dotnet.yml?branch=main" alt="CI @ master" />
 </p>
 
 <p align="center">
