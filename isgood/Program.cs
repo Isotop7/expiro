@@ -22,10 +22,10 @@ namespace isgood;
 public class Program
 {
     private static AppConfiguration? _appConfiguration;
-    public static ConcurrentQueue<Product> DatabaseQueue
+    public static ConcurrentQueue<DatabaseQueueElement> DatabaseQueue
     {
         get;
-    } = new ConcurrentQueue<Product>();
+    } = new ConcurrentQueue<DatabaseQueueElement>();
     public static ConcurrentQueue<Product> APIQueue
     {
         get;
