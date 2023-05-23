@@ -163,7 +163,6 @@ public class MqttBroker
             {
                 Console.WriteLine($"+ embeddedBroker: Timer for product '{product.Barcode}' finished");
                 Product matchedProduct = Products.First(e => e.Barcode == product.Barcode);
-                matchedProduct.Ready = true;
 
                 Program.APIQueue.Enqueue(matchedProduct);
                 Products.Remove(matchedProduct);
