@@ -15,6 +15,7 @@ using isgood.Configuration;
 using isgood.Mqtt;
 using isgood.OpenFoodFactsAPI;
 using isgood.Database;
+using isgood.Notification;
 
 namespace isgood;
 
@@ -50,7 +51,10 @@ public class Program
 			IConfigurationRoot configuration = builder.Build();
 			_appConfiguration = new();
             configuration.Bind(_appConfiguration);
-            _appConfiguration.Validate();
+            if (_appConfiguration.IsValid() == false)
+            {
+                throw new ArgumentException("AppConfiguration is invalid");
+            }
         }
         catch (Exception ex) 
         {
@@ -58,9 +62,19 @@ public class Program
             System.Environment.Exit(1);
         }
 
-        Console.WriteLine("+ isgood: Starting WebUI");
-        Task webUITask = Task.Run(() => StartWebUI());
-        Console.WriteLine("+ isgood: WebUI started");
+        if (_appConfiguration.WebUIConfiguration.Enabled == true)
+        {
+            Console.WriteLine("+ isgood: Starting WebUI");
+            Task webUITask = Task.Run(() => StartWebUIAsync());
+            Console.WriteLine("+ isgood: WebUI started");
+        }
+
+        if (_appConfiguration.NotificationConfiguration.Enabled == true)
+        {
+            Console.WriteLine("+ isgood: Starting notification service");
+            Task embeddedBrokerTask = Task.Run(() => StartNotificationServiceAsync());
+            Console.WriteLine("+ isgood: notification service started");
+        }
 
         if (_appConfiguration.MqttConfiguration.UseEmbedded == true)
         {
@@ -69,11 +83,11 @@ public class Program
             Console.WriteLine("+ isgood: embeddedBroker started");
 
             Console.WriteLine("+ isgood: Starting DatabaseWorkerService");
-            Task databaseWorkerServiceTask = Task.Run(() => StartDatabaseWorkerService());
+            Task databaseWorkerServiceTask = Task.Run(() => StartDatabaseWorkerServiceAsync());
             Console.WriteLine("+ isgood: DatabaseWorkerService started");
 
             Console.WriteLine("+ isgood: Starting APIWorkerService");
-            Task apiWorkerServiceTask = Task.Run(() => StartAPIWorkerService());
+            Task apiWorkerServiceTask = Task.Run(() => StartAPIWorkerServiceAsync());
             Console.WriteLine("+ isgood: APIWorkerService started");
 
             Console.WriteLine("+ isgood: Press CTRL+C to stop all tasks");
@@ -113,7 +127,7 @@ public class Program
         }
     }
 
-    private static async Task StartAPIWorkerService()
+    private static async Task StartAPIWorkerServiceAsync()
     {
         if (_appConfiguration != null)
         {
@@ -122,13 +136,26 @@ public class Program
         }
     }
 
-    private static async Task StartDatabaseWorkerService()
+    private static async Task StartDatabaseWorkerServiceAsync()
     {
         DatabaseWorkerService databaseWorkerService = new DatabaseWorkerService();
         await databaseWorkerService.StartAsync(_cancellationTokenSource.Token);
     }
 
-    private static async Task StartWebUI()
+    private static async Task StartNotificationServiceAsync()
+    {
+        if (_appConfiguration != null)
+        {
+            NotificationService notificationService = new NotificationService(_appConfiguration.NotificationConfiguration, _appConfiguration.ProductConfiguration.BestBeforeWarnDelta ?? 2);
+            await notificationService.StartAsync(_cancellationTokenSource.Token);
+        }
+        else
+        {
+            throw new ArgumentException("AppConfiguration missing");
+        }
+    }
+
+    private static async Task StartWebUIAsync()
     {
         WebApplicationBuilder builder = WebApplication.CreateBuilder();
         
