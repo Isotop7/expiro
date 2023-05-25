@@ -70,11 +70,11 @@
                 <td>
                     @if (Model.Product.BestBefore < DateTime.Now.AddDays(Convert.ToDouble(Model.ProductConfiguration.BestBeforeWarnDelta)))
                     {
-                        <mark>@Html.DisplayFor(model => model.Product.BestBefore)</mark>
+                        <mark>@Html.DisplayFor(model => model.Product.BestBeforeDateOnly)</mark>
                     }
                     else
                     {
-                        @Html.DisplayFor(model => model.Product.BestBefore)
+                        @Html.DisplayFor(model => model.Product.BestBeforeDateOnly)
                     }
                 </td>
             </tr>

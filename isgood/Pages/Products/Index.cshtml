@@ -45,11 +45,11 @@
                             @if (item.BestBefore <
                            DateTime.Now.AddDays(Convert.ToDouble(Model.ProductConfiguration.BestBeforeWarnDelta)))
                             {
-                                <mark>@Html.DisplayFor(modelItem => item.BestBefore)</mark>
+                                <mark>@Html.DisplayFor(modelItem => item.BestBeforeDateOnly)</mark>
                             }
                             else
                             {
-                                @Html.DisplayFor(modelItem => item.BestBefore)
+                                @Html.DisplayFor(modelItem => item.BestBeforeDateOnly)
                             }
                         </td>
                         <td>
