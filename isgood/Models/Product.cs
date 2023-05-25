@@ -8,6 +8,9 @@ namespace isgood.Models;
 [Table("Products")]
 public class Product
 {
+    [NotMapped]
+    private DateTime _bestBefore;
+
     [Key]
     public int Id { get; set; }
 
@@ -23,7 +26,26 @@ public class Product
     public string ImageUrl { get; set; }
 
     [JsonProperty("bestBefore")]
-    public DateTime BestBefore { get; set; }
+    public DateTime BestBefore 
+    { 
+        get 
+        {
+            return _bestBefore.Date;
+        }
+        set
+        {
+            _bestBefore = value.Date;
+        }
+    }
+
+    [NotMapped]
+    public string BestBeforeDateOnly
+    {
+        get
+        {
+            return _bestBefore.Date.ToString("dd.MM.yyyy");
+        }
+    }
 
     public Product() {
         Barcode = string.Empty;
