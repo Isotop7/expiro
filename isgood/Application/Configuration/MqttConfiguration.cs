@@ -30,6 +30,10 @@ public class MqttConfiguration
         {
             throw new Exception("Configuration file is missing property 'UseEmbedded' for MqttConfiguration");
         }
+        else if (UseEmbedded == true)
+        {
+            return true;
+        }
 
         if (BrokerURL is null || BrokerURL == string.Empty) 
         {
