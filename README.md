@@ -40,9 +40,10 @@
 2. Navigate to the project directory: `cd isgood/isgood`
 3. Build the application: `dotnet build`
 4. Copy the config file `isgood.tmpl.json`, rename it to `isgood.json` and adjust it
-5. Run the application: `dotnet run`
-6. Open your browser and access the port shown in the console
-7. Test the insertion of products with MQTT
+5. Create/update database backend: `dotnet ef database update`
+6. Run the application: `dotnet run`
+7. Open your browser and access the port shown in the console
+8. Test the insertion of products with MQTT
 
 ### 💻 Client
 

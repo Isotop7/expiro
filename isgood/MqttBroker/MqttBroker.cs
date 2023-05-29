@@ -10,6 +10,7 @@ using MQTTnet.Server;
 using MQTTnet.Internal;
 using Newtonsoft.Json;
 
+using isgood.Database;
 using isgood.Models;
 using isgood.Configuration;
 
@@ -18,11 +19,13 @@ namespace isgood.Mqtt;
 public class MqttBroker
 {
     private MqttServer mqttBroker;
+    private MqttConfiguration _mqttConfiguration;
     private Timer? bestBeforeTimeout;
 
     private List<Product> Products;
 
     public MqttBroker(MqttConfiguration mqttConfiguration) {
+        _mqttConfiguration = mqttConfiguration;
         Products = new();
 
         var options = new MqttServerOptionsBuilder()
@@ -34,17 +37,21 @@ public class MqttBroker
 
         mqttBroker.InterceptingPublishAsync += e =>
         {
-            if (e.ApplicationMessage.Topic.Equals(mqttConfiguration.TopicBarcode))
+            if (e.ApplicationMessage.Topic.Equals(_mqttConfiguration.TopicBarcode))
             {
-                DispatchTopicBarcode(e, mqttConfiguration.BestBeforeTimeout);
+                DispatchTopicBarcode(e, _mqttConfiguration.BestBeforeTimeout);
             }
-            else if (e.ApplicationMessage.Topic.Equals(mqttConfiguration.TopicBestBeforeSet))
+            else if (e.ApplicationMessage.Topic.Equals(_mqttConfiguration.TopicBestBeforeSet))
             {
                 DispatchTopicBestBeforeSet(e);
             }
-            else if (e.ApplicationMessage.Topic.Equals(mqttConfiguration.TopicBarcodeRemove))
+            else if (e.ApplicationMessage.Topic.Equals(_mqttConfiguration.TopicBarcodeRemove))
             {
                 DispatchTopicBarcodeRemove(e);
+            }
+            else if (e.ApplicationMessage.Topic.Equals(_mqttConfiguration.TopicScannedAtGet))
+            {
+                DispatchTopicScannedAtGet(e);
             }
 
             return CompletedTask.Instance;
@@ -188,6 +195,40 @@ public class MqttBroker
         Console.WriteLine($"+ embeddedBroker: Product with barcode '{product.Barcode}' published and enqueued for removal");
 
         Program.DatabaseQueue.Enqueue(new(Database.DatabaseQueueElementAction.DELETE, product));
+    }
+
+    private async void DispatchTopicScannedAtGet(InterceptingPublishEventArgs ipea)
+    {
+        Product product = new();
+        try
+        {
+            string content = ipea.ApplicationMessage.ConvertPayloadToString().Trim() ?? string.Empty;
+            if (content is not null && content.Equals(string.Empty) == false)
+            {
+                product = JsonConvert.DeserializeObject<Product>(content) ?? new();
+            }
+            else
+            {
+                throw new InvalidCastException("Payload was empty and could not be deserialized");
+            }
+
+            Console.WriteLine($"+ embeddedBroker: Got product with barcode '{product.Barcode}'. Publishing ScannedAt property.");
+
+            AppDbContext appDbContext = new();
+            Product? foundProduct = appDbContext.Product.FirstOrDefault(p => p.Barcode == product.Barcode);
+
+            if (foundProduct == null)
+            {
+                throw new KeyNotFoundException($"Product with barcode {product.Barcode} was not found");
+            }
+
+            InternalMqttClient internalMqttClient = new(_mqttConfiguration);
+            await internalMqttClient.HandleScannedAtPublish(_mqttConfiguration.TopicScannedAtPublish, foundProduct);    
+        }
+        catch
+        {
+            throw;
+        }
     }
 
     private void BestBeforeTimeoutTriggered(object? element)
