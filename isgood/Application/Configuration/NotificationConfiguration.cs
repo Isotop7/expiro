@@ -27,6 +27,10 @@ public class NotificationConfiguration
         {
             throw new ArgumentNullException("Property 'Enabled' is missing but has to be true or false");
         }
+        else if (Enabled == false)
+        {
+            return true;
+        }
 
         if (SmtpServerAddress == null || SmtpServerAddress == string.Empty)
         {

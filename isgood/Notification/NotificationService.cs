@@ -26,29 +26,24 @@ public class NotificationService
     {
         while (!cancellationToken.IsCancellationRequested)
         {
-            try 
+            try
             {
                 using (var dbContext = new AppDbContext())
                 {
                     while (true)
                     {
                         Console.WriteLine($"+ NotificationService: Service is now active.");
-                        if (dbContext.Product != null)
+                        
+                        List<Product> products = dbContext.Product.ToList();
+                        foreach (Product p in products)
                         {
-                            List<Product> products = dbContext.Product.ToList();
-                            foreach(Product p in products)
+                            if ((p.BestBefore - DateTime.Now) <= TimeSpan.FromDays(_bestBeforeThreshold))
                             {
-                                if ((p.BestBefore - DateTime.Now) <= TimeSpan.FromDays(_bestBeforeThreshold))
-                                {
-                                    Console.WriteLine($"+ NotificationService: Sending notification for Product with barcode {p.Barcode} and BestBefore {p.BestBefore}");
-                                    SendNotification(p);
-                                }
+                                Console.WriteLine($"+ NotificationService: Sending notification for Product with barcode {p.Barcode} and BestBefore {p.BestBefore}");
+                                SendNotification(p);
                             }
                         }
-                        else
-                        {
-                            throw new ArgumentNullException("Database model is empty");
-                        }
+
                         Console.WriteLine("+ NotificationService: Service is now sleeping");
                         await Task.Delay(TimeSpan.FromHours(_notificationConfiguration.IntervalInHours), cancellationToken);
                     }
@@ -70,7 +65,7 @@ public class NotificationService
                 smtpClient.EnableSsl = _notificationConfiguration.SmtpUseSSL;
                 smtpClient.UseDefaultCredentials = false;
                 smtpClient.Credentials = new NetworkCredential(_notificationConfiguration.SmtpUsername, _notificationConfiguration.SmtpPassword);
-                
+
                 MailMessage mailMessage = new()
                 {
                     From = new(_notificationConfiguration.SmtpFromAddress ?? "isgood"),
@@ -102,6 +97,6 @@ public class NotificationService
         catch (Exception ex)
         {
             Console.WriteLine($"+ NotificationService: Failed to send email: {ex.Message}");
-        }    
+        }
     }
 }
