@@ -24,6 +24,9 @@
                         @Html.DisplayNameFor(model => model.Products[0].BestBefore)
                     </th>
                     <th>
+                        @Html.DisplayNameFor(model => model.Products[0].ScannedAt)
+                    </th>
+                    <th>
                         Options
                     </th>
                 </tr>
@@ -51,6 +54,9 @@
                             {
                                 @Html.DisplayFor(modelItem => item.BestBeforeDateOnly)
                             }
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.ScannedAtDateOnly)
                         </td>
                         <td>
                             <a asp-page="./Edit" asp-route-id="@item.Id">

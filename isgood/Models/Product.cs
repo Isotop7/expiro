@@ -10,13 +10,15 @@ public class Product
 {
     [NotMapped]
     private DateTime _bestBefore;
+    [NotMapped]
+    private DateTime _scannedAt;
 
     [Key]
     public int Id { get; set; }
 
     [JsonProperty("barcode")]
     public string Barcode { get; set; }
-    
+
     public string ProductName { get; set; }
 
     public string Categories { get; set; }
@@ -26,15 +28,28 @@ public class Product
     public string ImageUrl { get; set; }
 
     [JsonProperty("bestBefore")]
-    public DateTime BestBefore 
-    { 
-        get 
+    public DateTime BestBefore
+    {
+        get
         {
             return _bestBefore.Date;
         }
         set
         {
             _bestBefore = value.Date;
+        }
+    }
+
+    [JsonProperty("scannedAt")]
+    public DateTime ScannedAt
+    {
+        get
+        {
+            return _scannedAt.Date;
+        }
+        set
+        {
+            _scannedAt = value.Date;
         }
     }
 
@@ -47,12 +62,23 @@ public class Product
         }
     }
 
-    public Product() {
+    [NotMapped]
+    public string ScannedAtDateOnly
+    {
+        get
+        {
+            return _scannedAt.Date.ToString("dd.MM.yyyy");
+        }
+    }
+
+    public Product()
+    {
         Barcode = string.Empty;
         ProductName = string.Empty;
         Categories = string.Empty;
         Countries = string.Empty;
         ImageUrl = string.Empty;
         BestBefore = DateTime.MaxValue;
+        ScannedAt = DateTime.Now;
     }
 }

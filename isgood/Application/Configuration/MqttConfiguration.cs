@@ -13,6 +13,8 @@ public class MqttConfiguration
     public string TopicBarcode { get; set; }
     public string TopicBarcodeRemove { get; set; }
     public string TopicBestBeforeSet { get; set; }
+    public string TopicScannedAtGet { get; set; }
+    public string TopicScannedAtPublish { get; set; }
     public int BestBeforeTimeout { get; set; }
 
     public MqttConfiguration()
@@ -20,6 +22,8 @@ public class MqttConfiguration
         TopicBarcode = "product/barcode";
         TopicBestBeforeSet = "product/best_before/set";
         TopicBarcodeRemove = "product/barcode/remove";
+        TopicScannedAtGet = "product/scanned_at/get";
+        TopicScannedAtPublish = "product/scanned_at/publish";
         BestBeforeTimeout = 15;
     }
 
@@ -32,10 +36,10 @@ public class MqttConfiguration
         }
         else if (UseEmbedded == true)
         {
-            return true;
+            BrokerURL = "127.0.0.1";
         }
 
-        if (BrokerURL is null || BrokerURL == string.Empty) 
+        if (UseEmbedded == false && (BrokerURL is null || BrokerURL == string.Empty) ) 
         {
             throw new Exception("Configuration file is missing value 'BrokerURL'");
         }
