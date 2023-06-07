@@ -62,7 +62,7 @@ namespace isgood.Pages.Products
             if (await TryUpdateModelAsync<Product>(
                 product,
                 "Product",
-                p => p.ProductName, p => p.Categories, p => p.BestBefore))
+                p => p.ProductName, p => p.Categories, p => p.BestBefore, p => p.NotifiedAt))
             {
                 await _context.SaveChangesAsync();
                 return RedirectToPage("./Index");

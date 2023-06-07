@@ -1,6 +1,7 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using isgood.Configuration;
 using Newtonsoft.Json;
 
 namespace isgood.Models;
@@ -12,6 +13,8 @@ public class Product
     private DateTime _bestBefore;
     [NotMapped]
     private DateTime _scannedAt;
+    [NotMapped]
+    private DateTime _notifiedAt;
 
     [Key]
     public int Id { get; set; }
@@ -53,12 +56,24 @@ public class Product
         }
     }
 
+    public DateTime NotifiedAt
+    {
+        get
+        {
+            return _notifiedAt;
+        }
+        set
+        {
+            _notifiedAt = value;
+        }
+    }
+
     [NotMapped]
     public string BestBeforeDateOnly
     {
         get
         {
-            return _bestBefore.Date.ToString("dd.MM.yyyy");
+            return _bestBefore.Date.ToString(AppConfiguration.ShortDateFormat);
         }
     }
 
@@ -67,7 +82,16 @@ public class Product
     {
         get
         {
-            return _scannedAt.Date.ToString("dd.MM.yyyy");
+            return _scannedAt.Date.ToString(AppConfiguration.ShortDateFormat);
+        }
+    }
+
+    [NotMapped]
+    public string NotifiedAtDateTime
+    {
+        get
+        {
+            return _notifiedAt.ToString(AppConfiguration.LongDateFormat);
         }
     }
 
@@ -80,5 +104,6 @@ public class Product
         ImageUrl = string.Empty;
         BestBefore = DateTime.MaxValue;
         ScannedAt = DateTime.Now;
+        NotifiedAt = DateTime.Now;
     }
 }

@@ -6,6 +6,7 @@ public class NotificationConfiguration
 {
     public bool? Enabled { get; set; }
     public double IntervalInHours { get; set; }
+    public double NotificationIntervalInHours { get; set; }
     public string? SmtpServerAddress { get; set; }
     public int SmtpServerPort { get; set; }
     public bool SmtpUseSSL { get; set; }
@@ -17,6 +18,7 @@ public class NotificationConfiguration
     public NotificationConfiguration()
     {
         IntervalInHours = 8;
+        NotificationIntervalInHours = 12;
         SmtpUseSSL = true;
         SmtpServerPort = 587;
     }
