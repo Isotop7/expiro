@@ -41,7 +41,7 @@ namespace isgood.Pages.Products
                 "product",   // Prefix for form value.
                 p => p.Barcode, p => p.BestBefore))
             {
-                Program.APIQueue.Enqueue(emptyProduct);
+                Program.ApiQueue.Enqueue(emptyProduct);
                 return RedirectToPage("./Index");
             }
 

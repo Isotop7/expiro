@@ -8,8 +8,5 @@ public class ProductConfiguration
     {
     }
 
-    public bool IsValid()
-    {
-        return true;
-    }
+    public bool IsValid() => true;
 }

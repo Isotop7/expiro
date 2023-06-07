@@ -15,6 +15,6 @@ public class IndexModel : PageModel
 
     public void OnGet()
     {
-
+        // Empty body to display static content
     }
 }

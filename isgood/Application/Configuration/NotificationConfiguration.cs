@@ -27,7 +27,7 @@ public class NotificationConfiguration
     {
         if (Enabled == null)
         {
-            throw new ArgumentNullException("Property 'Enabled' is missing but has to be true or false");
+            throw new ArgumentException("Property 'Enabled' is missing but has to be true or false");
         }
         else if (Enabled == false)
         {
@@ -36,23 +36,24 @@ public class NotificationConfiguration
 
         if (SmtpServerAddress == null || SmtpServerAddress == string.Empty)
         {
-            throw new ArgumentNullException("Property 'SmtpServerAddress' is not specified or empty");
+            throw new ArgumentException("Property 'SmtpServerAddress' is not specified or empty");
         }
 
         if (SmtpUsername == null || SmtpUsername == string.Empty)
         {
-            throw new ArgumentNullException("Property 'SmtpUsername' is not specified or empty");
+            throw new ArgumentException("Property 'SmtpUsername' is not specified or empty");
         }
 
         if (SmtpPassword == null || SmtpPassword == string.Empty)
         {
-            throw new ArgumentNullException("Property 'SmtpPassword' is not specified or empty");
+            throw new ArgumentException("Property 'SmtpPassword' is not specified or empty");
         }
 
         if (SmtpFromAddress == null || SmtpFromAddress == string.Empty)
         {
-            throw new ArgumentNullException("Property 'SmtpFromAddress' is not specified or empty");
+            throw new ArgumentException("Property 'SmtpFromAddress' is not specified or empty");
         }
+        
         return true;
     }
 }
