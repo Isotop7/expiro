@@ -32,34 +32,34 @@ public class MqttConfiguration
         // Check for mqtt mode
         if (UseEmbedded is null)
         {
-            throw new Exception("Configuration file is missing property 'UseEmbedded' for MqttConfiguration");
+            throw new ArgumentException("Configuration file is missing property 'UseEmbedded' for MqttConfiguration");
         }
-        else if (UseEmbedded == true)
+
+        if (UseEmbedded == true)
         {
             BrokerURL = "127.0.0.1";
         }
 
         if (UseEmbedded == false && (BrokerURL is null || BrokerURL == string.Empty) ) 
         {
-            throw new Exception("Configuration file is missing value 'BrokerURL'");
+            throw new ArgumentException("Configuration file is missing value 'BrokerURL'");
         }
-        else if (BrokerPort is null || BrokerPort < 0 ) 
+        
+        if (BrokerPort is null || BrokerPort < 0 ) 
         {
-            throw new Exception("Configuration file is missing value 'BrokerPort'");
+            throw new ArgumentException("Configuration file is missing value 'BrokerPort'");
         }
-        else if (BrokerAuthEnabled is not null) 
+        
+        if (BrokerAuthEnabled is not null && BrokerAuthEnabled == true) 
         {
-            if (BrokerAuthEnabled == true) 
+            // If auth is enabled, we need credentials
+            if (BrokerUsername is null || BrokerUsername == string.Empty)
             {
-                // If auth is enabled, we need credentials
-                if (BrokerUsername is null || BrokerUsername == string.Empty)
-                {
-                    throw new Exception("Configuration file is missing value 'BrokerUsername'");
-                }
-                else if (BrokerPassword is null || BrokerPassword == string.Empty)
-                {
-                    throw new Exception("Configuration file is missing value 'BrokerPassword'");
-                }
+                throw new ArgumentException("Configuration file is missing value 'BrokerUsername'");
+            }
+            else if (BrokerPassword is null || BrokerPassword == string.Empty)
+            {
+                throw new ArgumentException("Configuration file is missing value 'BrokerPassword'");
             }
         }
 

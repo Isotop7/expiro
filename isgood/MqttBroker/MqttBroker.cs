@@ -18,13 +18,13 @@ namespace isgood.Mqtt;
 
 public class MqttBroker
 {
-    private MqttServer mqttBroker;
-    private MqttConfiguration _mqttConfiguration;
+    private readonly MqttServer mqttBroker;
+    private readonly MqttConfiguration _mqttConfiguration;
     private Timer? bestBeforeTimeout;
+    private readonly List<Product> Products;
 
-    private List<Product> Products;
-
-    public MqttBroker(MqttConfiguration mqttConfiguration) {
+    public MqttBroker(MqttConfiguration mqttConfiguration)
+    {
         _mqttConfiguration = mqttConfiguration;
         Products = new();
 
@@ -60,27 +60,30 @@ public class MqttBroker
 
     public async Task Start(CancellationToken cancellationToken)
     {
-        if (mqttBroker != null)
+        if (mqttBroker == null)
         {
-            try {
-                await mqttBroker.StartAsync();
+            throw new ApplicationException();
+        }
 
-                while (!cancellationToken.IsCancellationRequested)
-                {
-                    //TODO: Do we really need to do this here?
-                    await Task.Delay(TimeSpan.FromSeconds(10), cancellationToken);
-                }
+        try
+        {
+            await mqttBroker.StartAsync();
 
-                // Stop the MQTT server
-                await mqttBroker.StopAsync();
-                mqttBroker.Dispose();
-            }
-            catch (TaskCanceledException)
+            while (!cancellationToken.IsCancellationRequested)
             {
-                Console.WriteLine($"+ embeddedBroker: Cancellation was requested");
-                await mqttBroker.StopAsync();
-                mqttBroker.Dispose();
+                //TODO: Do we really need to do this here?
+                await Task.Delay(TimeSpan.FromSeconds(10), cancellationToken);
             }
+
+            // Stop the MQTT server
+            await mqttBroker.StopAsync();
+            mqttBroker.Dispose();
+        }
+        catch (TaskCanceledException)
+        {
+            Console.WriteLine($"+ embeddedBroker: Cancellation was requested");
+            await mqttBroker.StopAsync();
+            mqttBroker.Dispose();
         }
     }
 
@@ -99,7 +102,7 @@ public class MqttBroker
         try
         {
             string content = ipea.ApplicationMessage.ConvertPayloadToString().Trim() ?? string.Empty;
-            if (content != null && content.Equals(string.Empty) == false)
+            if (content != null && !string.IsNullOrEmpty(content))
             {
                 product = JsonConvert.DeserializeObject<Product>(content);
             }
@@ -113,7 +116,7 @@ public class MqttBroker
                 throw new InvalidCastException("Product could not be deserialized");
             }
 
-            if (product.Barcode != null && Regex.IsMatch(product.Barcode, AppConfiguration.BarcodeRegex, new(), TimeSpan.FromSeconds(30)) == false)
+            if (product.Barcode != null && !Regex.IsMatch(product.Barcode, AppConfiguration.BarcodeRegex, new(), TimeSpan.FromSeconds(30)))
             {
                 throw new InvalidOperationException("Published barcode does not match format");
             }
@@ -122,11 +125,11 @@ public class MqttBroker
             if (idx == -1)
             {
                 Console.WriteLine($"+ embeddedBroker: New product with barcode '{product.Barcode}' published, starting timer with {timerTimeout} seconds timeout ...");
-            
+
                 bestBeforeTimeout = new Timer(
-                    BestBeforeTimeoutTriggered, 
-                    product, 
-                    TimeSpan.FromSeconds(timerTimeout), 
+                    BestBeforeTimeoutTriggered,
+                    product,
+                    TimeSpan.FromSeconds(timerTimeout),
                     Timeout.InfiniteTimeSpan
                 );
 
@@ -134,9 +137,7 @@ public class MqttBroker
             }
         }
         catch
-        {
-            throw;
-        }
+        { }
     }
 
     private void DispatchTopicBestBeforeSet(InterceptingPublishEventArgs ipea)
@@ -145,7 +146,7 @@ public class MqttBroker
         try
         {
             string content = ipea.ApplicationMessage.ConvertPayloadToString().Trim() ?? string.Empty;
-            if (content is not null && content.Equals(string.Empty) == false)
+            if (content is not null && !string.IsNullOrEmpty(content))
             {
                 product = JsonConvert.DeserializeObject<Product>(content) ?? new();
             }
@@ -155,9 +156,7 @@ public class MqttBroker
             }
         }
         catch
-        {
-            throw;
-        }
+        { }
 
         Console.WriteLine($"+ embeddedBroker: Best before date for product with barcode '{product.Barcode}' published, trying to update date with value '{product.BestBefore}'");
 
@@ -172,13 +171,13 @@ public class MqttBroker
         }
     }
 
-    private void DispatchTopicBarcodeRemove(InterceptingPublishEventArgs ipea)
+    private static void DispatchTopicBarcodeRemove(InterceptingPublishEventArgs ipea)
     {
         Product product = new();
         try
         {
             string content = ipea.ApplicationMessage.ConvertPayloadToString().Trim() ?? string.Empty;
-            if (content is not null && content.Equals(string.Empty) == false)
+            if (content is not null && !string.IsNullOrEmpty(content))
             {
                 product = JsonConvert.DeserializeObject<Product>(content) ?? new();
             }
@@ -188,9 +187,7 @@ public class MqttBroker
             }
         }
         catch
-        {
-            throw;
-        }
+        { }
 
         Console.WriteLine($"+ embeddedBroker: Product with barcode '{product.Barcode}' published and enqueued for removal");
 
@@ -203,7 +200,7 @@ public class MqttBroker
         try
         {
             string content = ipea.ApplicationMessage.ConvertPayloadToString().Trim() ?? string.Empty;
-            if (content is not null && content.Equals(string.Empty) == false)
+            if (content is not null && !string.IsNullOrEmpty(content))
             {
                 product = JsonConvert.DeserializeObject<Product>(content) ?? new();
             }
@@ -223,12 +220,10 @@ public class MqttBroker
             }
 
             InternalMqttClient internalMqttClient = new(_mqttConfiguration);
-            await internalMqttClient.HandleScannedAtPublish(_mqttConfiguration.TopicScannedAtPublish, foundProduct);    
+            await internalMqttClient.HandleScannedAtPublish(_mqttConfiguration.TopicScannedAtPublish, foundProduct);
         }
         catch
-        {
-            throw;
-        }
+        { }
     }
 
     private void BestBeforeTimeoutTriggered(object? element)
@@ -245,7 +240,7 @@ public class MqttBroker
                 Console.WriteLine($"+ embeddedBroker: Timer for product '{product.Barcode}' finished");
                 Product matchedProduct = Products.First(e => e.Barcode == product.Barcode);
 
-                Program.APIQueue.Enqueue(matchedProduct);
+                Program.ApiQueue.Enqueue(matchedProduct);
                 Products.Remove(matchedProduct);
                 Console.WriteLine($"+ embeddedBroker: Removed product with barcode '{product.Barcode}' from working list and queued it for API fulfillment");
             }

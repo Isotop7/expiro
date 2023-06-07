@@ -13,20 +13,20 @@ using Microsoft.Extensions.DependencyInjection;
 using isgood.Models;
 using isgood.Configuration;
 using isgood.Mqtt;
-using isgood.OpenFoodFactsAPI;
+using isgood.OpenFoodFactsApi;
 using isgood.Database;
 using isgood.Notification;
 
 namespace isgood;
 
-public class Program
+public static class Program
 {
     private static AppConfiguration? _appConfiguration;
     public static ConcurrentQueue<DatabaseQueueElement> DatabaseQueue
     {
         get;
     } = new ConcurrentQueue<DatabaseQueueElement>();
-    public static ConcurrentQueue<Product> APIQueue
+    public static ConcurrentQueue<Product> ApiQueue
     {
         get;
     } = new ConcurrentQueue<Product>();
@@ -131,7 +131,7 @@ public class Program
     {
         if (_appConfiguration != null)
         {
-            APIWorkerService apiWorkerService = new APIWorkerService(_appConfiguration);
+            ApiWorkerService apiWorkerService = new ApiWorkerService();
             await apiWorkerService.StartAsync(_cancellationTokenSource.Token);
         }
     }

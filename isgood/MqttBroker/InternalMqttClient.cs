@@ -13,7 +13,7 @@ namespace isgood.Mqtt;
 
 public class InternalMqttClient
 {
-    private MqttConfiguration _mqttConfiguration;
+    private readonly MqttConfiguration _mqttConfiguration;
 
     public InternalMqttClient(MqttConfiguration mqttConfiguration)
     {
