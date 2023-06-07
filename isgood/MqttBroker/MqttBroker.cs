@@ -62,7 +62,7 @@ public class MqttBroker
     {
         if (mqttBroker == null)
         {
-            throw new ApplicationException();
+            throw new ObjectDisposedException("MQTT broker not set up");
         }
 
         try
