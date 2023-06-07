@@ -28,6 +28,11 @@
                 <span asp-validation-for="Product.BestBefore"></span>
             </div>
             <div>
+                <label asp-for="Product.NotifiedAt"></label>
+                <input asp-for="Product.NotifiedAt"/>
+                <span asp-validation-for="Product.NotifiedAt"></span>
+            </div>
+            <div>
                 <input type="submit" value="Save"/>
             </div>
         </form>
