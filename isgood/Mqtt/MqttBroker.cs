@@ -19,9 +19,9 @@ namespace isgood.Mqtt;
 public class MqttBroker
 {
     private readonly MqttServer mqttBroker;
-    private readonly MqttConfiguration _mqttConfiguration;
+    private MqttConfiguration _mqttConfiguration;
     private Timer? bestBeforeTimeout;
-    private readonly List<Product> Products;
+    private List<Product> Products;
 
     public MqttBroker(MqttConfiguration mqttConfiguration)
     {
