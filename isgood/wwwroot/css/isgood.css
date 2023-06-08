@@ -1,0 +1,9 @@
+#searchForm {
+    display: inline-block; 
+    margin: 0; 
+    padding: var(--nav-element-spacing-vertical) var(--nav-element-spacing-horizontal);
+}
+
+#searchForm input {
+    margin-bottom: 0;
+}

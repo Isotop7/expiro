@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - isgood</title>
     <link rel="stylesheet" href="/css/pico.css">
+    <link rel="stylesheet" href="/css/isgood.css">
 </head>
 
 <body>
@@ -13,6 +14,11 @@
         <nav>
             <ul>
                 <li><a href="./"><strong>isgood</strong></a></li>
+            </ul>
+            <ul>
+                <form method="get" action="/Products/Search" id="searchForm">
+                    <input type="search" id="search" name="query" placeholder="Search ...">
+                </form>
             </ul>
             <ul>
                 <li>
