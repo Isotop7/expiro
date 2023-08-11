@@ -6,13 +6,13 @@ using Newtonsoft.Json;
 
 using isgood.Models;
 
-namespace isgood.OpenFoodFactsAPI;
+namespace isgood.OpenFoodFactsApi;
 
-internal class OpenFoodFactsAPIController
+internal class OpenFoodFactsApiController
 {
-    private string _baseUrl;
+    private readonly string _baseUrl;
 
-    public OpenFoodFactsAPIController(string baseUrl)
+    public OpenFoodFactsApiController(string baseUrl)
     {
         _baseUrl = baseUrl;
     }
@@ -32,18 +32,18 @@ internal class OpenFoodFactsAPIController
         if (responseMessage.IsSuccessStatusCode)
         {
             string content = await responseMessage.Content.ReadAsStringAsync();
-            OpenFoodFactsAPIModel? openFoodFactsAPIModel = JsonConvert.DeserializeObject<OpenFoodFactsAPIModel>(content);
+            OpenFoodFactsApiModel? openFoodFactsApiModel = JsonConvert.DeserializeObject<OpenFoodFactsApiModel>(content);
 
-            if (openFoodFactsAPIModel == null)
+            if (openFoodFactsApiModel == null)
             {
                 throw new InvalidCastException("Could not convert response to API model");
             }
             else
             {
-                product.ProductName = openFoodFactsAPIModel.APIProduct.ProductName ?? string.Empty;
-                product.Categories = openFoodFactsAPIModel.APIProduct.Categories ?? string.Empty;
-                product.Countries = openFoodFactsAPIModel.APIProduct.Countries ?? string.Empty;
-                product.ImageUrl = openFoodFactsAPIModel.APIProduct.ImageUrl ?? string.Empty;
+                product.ProductName = openFoodFactsApiModel.ApiProduct.ProductName ?? string.Empty;
+                product.Categories = openFoodFactsApiModel.ApiProduct.Categories ?? string.Empty;
+                product.Countries = openFoodFactsApiModel.ApiProduct.Countries ?? string.Empty;
+                product.ImageUrl = openFoodFactsApiModel.ApiProduct.ImageUrl ?? string.Empty;
             }
         }
 

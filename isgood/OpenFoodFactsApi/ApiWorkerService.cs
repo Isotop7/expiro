@@ -6,19 +6,16 @@ using isgood.Configuration;
 using isgood.Database;
 using isgood.Models;
 
-namespace isgood.OpenFoodFactsAPI;
+namespace isgood.OpenFoodFactsApi;
 
-internal class APIWorkerService
+internal class ApiWorkerService
 {
-    private AppConfiguration _appConfiguration;
-    public APIWorkerService(AppConfiguration appConfiguration)
-    {
-        _appConfiguration = appConfiguration;
-    }
+    public ApiWorkerService()
+    { }
 
     public async Task StartAsync(CancellationToken cancellationToken)
     {
-        OpenFoodFactsAPIController openFoodFactsAPIController = new(AppConfiguration.OpenFoodFactsApiUrl);
+        OpenFoodFactsApiController openFoodFactsApiController = new(AppConfiguration.OpenFoodFactsApiUrl);
 
         while (!cancellationToken.IsCancellationRequested)
         {
@@ -28,7 +25,7 @@ internal class APIWorkerService
                 {
                     while (true)
                     {
-                        if (Program.APIQueue.TryDequeue(out Product? product))
+                        if (Program.ApiQueue.TryDequeue(out Product? product))
                         {
                             if (product == null)
                             {
@@ -36,12 +33,12 @@ internal class APIWorkerService
                             }
                             else
                             {
-                                Console.WriteLine($"+ APIWorkerService: Dequeued element with barcode '{product.Barcode}'");
+                                Console.WriteLine($"+ ApiWorkerService: Dequeued element with barcode '{product.Barcode}'");
                                 
-                                Console.WriteLine($"+ APIWorkerService: Getting facts for product with barcode '{product.Barcode}'");
-                                product = await openFoodFactsAPIController.GetProductFacts(product);
+                                Console.WriteLine($"+ ApiWorkerService: Getting facts for product with barcode '{product.Barcode}'");
+                                product = await openFoodFactsApiController.GetProductFacts(product);
 
-                                Console.WriteLine($"+ APIWorkerService: Enqueuing element with barcode '{product.Barcode}' for database insertion");
+                                Console.WriteLine($"+ ApiWorkerService: Enqueuing element with barcode '{product.Barcode}' for database insertion");
                                 Program.DatabaseQueue.Enqueue(new(isgood.Database.DatabaseQueueElementAction.INSERT, product));
                             }
                         }
@@ -52,7 +49,7 @@ internal class APIWorkerService
             }
             catch (TaskCanceledException)
             {
-                Console.WriteLine($"+ APIWorkerService : Cancellation was requested");
+                Console.WriteLine($"+ ApiWorkerService : Cancellation was requested");
             }
         }
     }

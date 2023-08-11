@@ -10,6 +10,8 @@ internal class AppConfiguration {
     public WebUIConfiguration WebUIConfiguration { get; set; }
     public static readonly string OpenFoodFactsApiUrl = "https://world.openfoodfacts.org/api/v0/product";
     public static readonly string BarcodeRegex = "^\\d{13}$";
+    public const string ShortDateFormat = "dd.MM.yyyy";
+    public const string LongDateFormat = "dd.MM.yyyy HH:mm:ss";
 
     public AppConfiguration() {
         MqttConfiguration = new();

@@ -14,6 +14,8 @@
         "BrokerPassword": "",
         "TopicsBarcode": "",
         "TopicsBestBeforeSet": "",
+        "TopicScannedAt": "",
+        "TopicScannedAtPublished": "",
         "BestBeforeTimeout": 20
     },
     "NotificationConfiguration": {

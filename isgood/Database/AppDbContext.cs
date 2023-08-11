@@ -6,10 +6,10 @@ namespace isgood.Database;
 
 public class AppDbContext : DbContext
 {
-    public DbSet<Product>? Product { get; set; }
+    public DbSet<Product> Product { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        optionsBuilder.UseSqlite("Data Source=isgood.db");
+        optionsBuilder.UseSqlite("Data Source=isgood.sqlite");
     }
 }

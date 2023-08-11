@@ -13,6 +13,8 @@ public class MqttConfiguration
     public string TopicBarcode { get; set; }
     public string TopicBarcodeRemove { get; set; }
     public string TopicBestBeforeSet { get; set; }
+    public string TopicScannedAtGet { get; set; }
+    public string TopicScannedAtPublish { get; set; }
     public int BestBeforeTimeout { get; set; }
 
     public MqttConfiguration()
@@ -20,6 +22,8 @@ public class MqttConfiguration
         TopicBarcode = "product/barcode";
         TopicBestBeforeSet = "product/best_before/set";
         TopicBarcodeRemove = "product/barcode/remove";
+        TopicScannedAtGet = "product/scanned_at/get";
+        TopicScannedAtPublish = "product/scanned_at/publish";
         BestBeforeTimeout = 15;
     }
 
@@ -28,34 +32,34 @@ public class MqttConfiguration
         // Check for mqtt mode
         if (UseEmbedded is null)
         {
-            throw new Exception("Configuration file is missing property 'UseEmbedded' for MqttConfiguration");
-        }
-        else if (UseEmbedded == true)
-        {
-            return true;
+            throw new ArgumentException("Configuration file is missing property 'UseEmbedded' for MqttConfiguration");
         }
 
-        if (BrokerURL is null || BrokerURL == string.Empty) 
+        if (UseEmbedded == true)
         {
-            throw new Exception("Configuration file is missing value 'BrokerURL'");
+            BrokerURL = "127.0.0.1";
         }
-        else if (BrokerPort is null || BrokerPort < 0 ) 
+
+        if (UseEmbedded == false && (BrokerURL is null || BrokerURL == string.Empty) ) 
         {
-            throw new Exception("Configuration file is missing value 'BrokerPort'");
+            throw new ArgumentException("Configuration file is missing value 'BrokerURL'");
         }
-        else if (BrokerAuthEnabled is not null) 
+        
+        if (BrokerPort is null || BrokerPort < 0 ) 
         {
-            if (BrokerAuthEnabled == true) 
+            throw new ArgumentException("Configuration file is missing value 'BrokerPort'");
+        }
+        
+        if (BrokerAuthEnabled is not null && BrokerAuthEnabled == true) 
+        {
+            // If auth is enabled, we need credentials
+            if (BrokerUsername is null || BrokerUsername == string.Empty)
             {
-                // If auth is enabled, we need credentials
-                if (BrokerUsername is null || BrokerUsername == string.Empty)
-                {
-                    throw new Exception("Configuration file is missing value 'BrokerUsername'");
-                }
-                else if (BrokerPassword is null || BrokerPassword == string.Empty)
-                {
-                    throw new Exception("Configuration file is missing value 'BrokerPassword'");
-                }
+                throw new ArgumentException("Configuration file is missing value 'BrokerUsername'");
+            }
+            else if (BrokerPassword is null || BrokerPassword == string.Empty)
+            {
+                throw new ArgumentException("Configuration file is missing value 'BrokerPassword'");
             }
         }
 

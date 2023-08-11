@@ -9,6 +9,7 @@
 
     <figure>
         <table role="grid">
+            <caption>Overview of all products</caption>
             <thead>
                 <tr>
                     <th>
@@ -22,6 +23,12 @@
                     </th>
                     <th>
                         @Html.DisplayNameFor(model => model.Products[0].BestBefore)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Products[0].ScannedAt)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Products[0].NotifiedAt)
                     </th>
                     <th>
                         Options
@@ -43,7 +50,7 @@
                         </td>
                         <td>
                             @if (item.BestBefore <
-                           DateTime.Now.AddDays(Convert.ToDouble(Model.ProductConfiguration.BestBeforeWarnDelta)))
+                            DateTime.Now.AddDays(Convert.ToDouble(Model.ProductConfiguration.BestBeforeWarnDelta)))
                             {
                                 <mark>@Html.DisplayFor(modelItem => item.BestBeforeDateOnly)</mark>
                             }
@@ -51,6 +58,12 @@
                             {
                                 @Html.DisplayFor(modelItem => item.BestBeforeDateOnly)
                             }
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.ScannedAtDateOnly)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.NotifiedAtDateTime)
                         </td>
                         <td>
                             <a asp-page="./Edit" asp-route-id="@item.Id">

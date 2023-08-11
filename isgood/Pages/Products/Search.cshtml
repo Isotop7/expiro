@@ -1,0 +1,36 @@
+@page
+@model isgood.Pages.Products.SearchModel
+
+@{
+    ViewData["Title"] = "Search product";
+}
+
+<div>
+    @if (Model.Products.Count == 0)
+    {
+        <p>No results found.</p>
+    }
+    else
+    {
+        <section id="accordions">
+            <h2>Results</h2>
+            @foreach (var product in Model.Products)
+            {
+            <details>
+                <summary>
+                    <a asp-page="./Details" asp-route-id="@product.Id">
+                        @product.ProductName
+                    </a>
+                </summary>
+                <p>
+                    <ul>
+                        <li>@product.Barcode</li>
+                        <li>@product.BestBeforeDateOnly</li>
+                        <li>@product.Categories</li>
+                    </ul>
+                </p>
+            </details>
+            }
+        </section>
+    }
+</div>

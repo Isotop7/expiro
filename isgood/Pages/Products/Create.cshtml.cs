@@ -1,7 +1,6 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 using isgood.Models;
@@ -10,7 +9,7 @@ namespace isgood.Pages.Products
 {
     public class CreateModel : PageModel
     {
-        private readonly isgood.Database.AppDbContext _context;
+        private readonly Database.AppDbContext _context;
         private readonly ILogger<CreateModel> _logger;
 
         [BindProperty]
@@ -41,7 +40,7 @@ namespace isgood.Pages.Products
                 "product",   // Prefix for form value.
                 p => p.Barcode, p => p.BestBefore))
             {
-                Program.APIQueue.Enqueue(emptyProduct);
+                Program.ApiQueue.Enqueue(emptyProduct);
                 return RedirectToPage("./Index");
             }
 

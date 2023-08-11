@@ -1,8 +1,8 @@
 using Newtonsoft.Json;
 
-namespace isgood.OpenFoodFactsAPI;
+namespace isgood.OpenFoodFactsApi;
 
-public class APIProduct
+public class ApiProduct
 {
     [JsonProperty("product_name")]
     public string? ProductName;
@@ -20,13 +20,13 @@ public class APIProduct
     public string? ImageUrl;
 }
 
-public class OpenFoodFactsAPIModel
+public class OpenFoodFactsApiModel
 {
     [JsonProperty("code")]
     public string Code { get; set; }
 
     [JsonProperty("product")]
-    public APIProduct APIProduct { get; set; }
+    public ApiProduct ApiProduct { get; set; }
 
     [JsonProperty("status")]
     public int Status { get; set; }
@@ -34,10 +34,10 @@ public class OpenFoodFactsAPIModel
     [JsonProperty("status_verbose")]
     public string StatusVerbose { get; set; }
 
-    public OpenFoodFactsAPIModel()
+    public OpenFoodFactsApiModel()
     {
         Code = string.Empty;
-        APIProduct = new();
+        ApiProduct = new();
         Status = int.MinValue;
         StatusVerbose = string.Empty;
     }

@@ -14,13 +14,14 @@
         <div>
             <figure>
                 <img
-                    src="@Html.DisplayFor(model => model.Product.ImageUrl)"
+                    src="@Html.DisplayFor(model => model.Product.ImageUrl)" alt="Product image"
                 />
             </figure>
         </div>
 
         <div>
             <table role="grid">
+                <caption>Detail overview of the product</caption>
                 <thead>
                     <tr>
                         <th>
@@ -87,6 +88,22 @@
                             }
                         </td>
                     </tr>
+                    <tr>
+                        <td>
+                            @Html.DisplayNameFor(model => model.Product.ScannedAt)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(model => model.Product.ScannedAtDateOnly)
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            @Html.DisplayNameFor(model => model.Product.NotifiedAt)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(model => model.Product.NotifiedAtDateTime)
+                        </td>
+                    </tr>
 
                 </tbody>
             </table>
@@ -98,6 +115,11 @@
     <div>
         <a asp-page="./Edit" asp-route-id="@Model.Product?.Id">
             <button>Edit</button>
+        </a>
+    </div>
+    <div>
+        <a asp-page="./Delete" asp-route-id="@Model.Product?.Id">
+            <button>Delete</button>
         </a>
     </div>
     <div>
