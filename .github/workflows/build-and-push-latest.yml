@@ -27,4 +27,4 @@ jobs:
         uses: docker/build-push-action@v4
         with:
           push: true
-          tags: isgood:latest
+          tags: ${{ secrets.DOCKER_REGISTRY_URL }}/isgood:latest
