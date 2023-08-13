@@ -22,7 +22,7 @@ jobs:
         dotnet-version: 6.0.x
     - name: Restore dependencies
       run: dotnet restore isgood/isgood.csproj
-    - name: Build
-      run: dotnet build --no-restore isgood/isgood.csproj
+    - name: Publish
+      run: dotnet publish -c Release -o release --no-restore isgood/isgood.csproj
     - name: Test
       run: dotnet test --no-build --verbosity normal isgood/isgood.csproj
