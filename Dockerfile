@@ -2,7 +2,7 @@ FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
 WORKDIR /source
 
 # copy csproj and restore as distinct layers
-COPY *.sln .
+COPY isgood/*.sln .
 COPY isgood/*.csproj ./aspnetapp/
 RUN dotnet restore
 
