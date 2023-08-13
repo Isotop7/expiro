@@ -2,13 +2,13 @@ FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
 WORKDIR /source
 
 # copy csproj and restore as distinct layers
-COPY isgood/*.sln .
-COPY isgood/*.csproj ./aspnetapp/
-RUN dotnet restore
+COPY isgood/isgood.sln ./isgood/
+COPY isgood/isgood.csproj ./isgood/
+RUN dotnet restore ./isgood/
 
 # copy everything else and build app
-COPY isgood/. ./aspnetapp/
-WORKDIR /source/aspnetapp
+COPY isgood/. ./isgood/
+WORKDIR /source/isgood
 RUN dotnet publish -c release -o /app --no-restore
 
 # final stage/image
