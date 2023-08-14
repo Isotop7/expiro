@@ -103,64 +103,55 @@ public class MqttBroker
     private void DispatchTopicBarcode(InterceptingPublishEventArgs ipea, int timerTimeout)
     {
         Product? product = new();
-        try
+
+        string content = ipea.ApplicationMessage.ConvertPayloadToString().Trim() ?? string.Empty;
+        if (content != null && !string.IsNullOrEmpty(content))
         {
-            string content = ipea.ApplicationMessage.ConvertPayloadToString().Trim() ?? string.Empty;
-            if (content != null && !string.IsNullOrEmpty(content))
-            {
-                product = JsonConvert.DeserializeObject<Product>(content);
-            }
-            else
-            {
-                throw new InvalidCastException("Payload was empty and could not be deserialized");
-            }
-
-            if (product == null)
-            {
-                throw new InvalidCastException("Product could not be deserialized");
-            }
-
-            if (product.Barcode != null && !Regex.IsMatch(product.Barcode, AppConfiguration.BarcodeRegex, new(), TimeSpan.FromSeconds(30)))
-            {
-                throw new InvalidOperationException("Published barcode does not match format");
-            }
-
-            int idx = Products.FindIndex(e => e.Barcode == product.Barcode);
-            if (idx == -1)
-            {
-                Console.WriteLine($"+ embeddedBroker: New product with barcode '{product.Barcode}' published, starting timer with {timerTimeout} seconds timeout ...");
-
-                bestBeforeTimeout = new Timer(
-                    BestBeforeTimeoutTriggered,
-                    product,
-                    TimeSpan.FromSeconds(timerTimeout),
-                    Timeout.InfiniteTimeSpan
-                );
-
-                Products.Add(product);
-            }
+            product = JsonConvert.DeserializeObject<Product>(content);
         }
-        catch
-        { }
+        else
+        {
+            throw new InvalidCastException("Payload was empty and could not be deserialized");
+        }
+
+        if (product == null)
+        {
+            throw new InvalidCastException("Product could not be deserialized");
+        }
+
+        if (product.Barcode != null && !Regex.IsMatch(product.Barcode, AppConfiguration.BarcodeRegex, new(), TimeSpan.FromSeconds(30)))
+        {
+            throw new InvalidOperationException("Published barcode does not match format");
+        }
+
+        int idx = Products.FindIndex(e => e.Barcode == product.Barcode);
+        if (idx == -1)
+        {
+            Console.WriteLine($"+ embeddedBroker: New product with barcode '{product.Barcode}' published, starting timer with {timerTimeout} seconds timeout ...");
+
+            bestBeforeTimeout = new Timer(
+                BestBeforeTimeoutTriggered,
+                product,
+                TimeSpan.FromSeconds(timerTimeout),
+                Timeout.InfiniteTimeSpan
+            );
+
+            Products.Add(product);
+        }
     }
 
     private void DispatchTopicBestBeforeSet(InterceptingPublishEventArgs ipea)
     {
         Product product = new();
-        try
+        string content = ipea.ApplicationMessage.ConvertPayloadToString().Trim() ?? string.Empty;
+        if (content is not null && !string.IsNullOrEmpty(content))
         {
-            string content = ipea.ApplicationMessage.ConvertPayloadToString().Trim() ?? string.Empty;
-            if (content is not null && !string.IsNullOrEmpty(content))
-            {
-                product = JsonConvert.DeserializeObject<Product>(content) ?? new();
-            }
-            else
-            {
-                throw new InvalidCastException("Payload was empty and could not be deserialized");
-            }
+            product = JsonConvert.DeserializeObject<Product>(content) ?? new();
         }
-        catch
-        { }
+        else
+        {
+            throw new InvalidCastException("Payload was empty and could not be deserialized");
+        }
 
         Console.WriteLine($"+ embeddedBroker: Best before date for product with barcode '{product.Barcode}' published, trying to update date with value '{product.BestBefore}'");
 
@@ -178,20 +169,15 @@ public class MqttBroker
     private static void DispatchTopicBarcodeRemove(InterceptingPublishEventArgs ipea)
     {
         Product product = new();
-        try
+        string content = ipea.ApplicationMessage.ConvertPayloadToString().Trim() ?? string.Empty;
+        if (content is not null && !string.IsNullOrEmpty(content))
         {
-            string content = ipea.ApplicationMessage.ConvertPayloadToString().Trim() ?? string.Empty;
-            if (content is not null && !string.IsNullOrEmpty(content))
-            {
-                product = JsonConvert.DeserializeObject<Product>(content) ?? new();
-            }
-            else
-            {
-                throw new InvalidCastException("Payload was empty and could not be deserialized");
-            }
+            product = JsonConvert.DeserializeObject<Product>(content) ?? new();
         }
-        catch
-        { }
+        else
+        {
+            throw new InvalidCastException("Payload was empty and could not be deserialized");
+        }
 
         Console.WriteLine($"+ embeddedBroker: Product with barcode '{product.Barcode}' published and enqueued for removal");
 
@@ -201,33 +187,28 @@ public class MqttBroker
     private async void DispatchTopicScannedAtGet(InterceptingPublishEventArgs ipea)
     {
         Product product = new();
-        try
+        string content = ipea.ApplicationMessage.ConvertPayloadToString().Trim() ?? string.Empty;
+        if (content is not null && !string.IsNullOrEmpty(content))
         {
-            string content = ipea.ApplicationMessage.ConvertPayloadToString().Trim() ?? string.Empty;
-            if (content is not null && !string.IsNullOrEmpty(content))
-            {
-                product = JsonConvert.DeserializeObject<Product>(content) ?? new();
-            }
-            else
-            {
-                throw new InvalidCastException("Payload was empty and could not be deserialized");
-            }
-
-            Console.WriteLine($"+ embeddedBroker: Got product with barcode '{product.Barcode}'. Publishing ScannedAt property.");
-
-            AppDbContext appDbContext = new();
-            Product? foundProduct = appDbContext.Product.FirstOrDefault(p => p.Barcode == product.Barcode);
-
-            if (foundProduct == null)
-            {
-                throw new KeyNotFoundException($"Product with barcode {product.Barcode} was not found");
-            }
-
-            InternalMqttClient internalMqttClient = new(_mqttConfiguration);
-            await internalMqttClient.HandleScannedAtPublish(_mqttConfiguration.TopicScannedAtPublish, foundProduct);
+            product = JsonConvert.DeserializeObject<Product>(content) ?? new();
         }
-        catch
-        { }
+        else
+        {
+            throw new InvalidCastException("Payload was empty and could not be deserialized");
+        }
+
+        Console.WriteLine($"+ embeddedBroker: Got product with barcode '{product.Barcode}'. Publishing ScannedAt property.");
+
+        AppDbContext appDbContext = new();
+        Product? foundProduct = appDbContext.Product.FirstOrDefault(p => p.Barcode == product.Barcode);
+
+        if (foundProduct == null)
+        {
+            throw new KeyNotFoundException($"Product with barcode {product.Barcode} was not found");
+        }
+
+        InternalMqttClient internalMqttClient = new(_mqttConfiguration);
+        await internalMqttClient.HandleScannedAtPublish(_mqttConfiguration.TopicScannedAtPublish, foundProduct);
     }
 
     private void DispatchUnknownTopic(InterceptingPublishEventArgs ipea)
