@@ -121,7 +121,7 @@ public class MqttBroker
 
         if (product.Barcode != null && !Regex.IsMatch(product.Barcode, AppConfiguration.BarcodeRegex, new(), TimeSpan.FromSeconds(30)))
         {
-            throw new InvalidOperationException("Published barcode does not match format");
+            throw new InvalidOperationException($"Published barcode '{product.Barcode}' does not match format");
         }
 
         int idx = Products.FindIndex(e => e.Barcode == product.Barcode);
