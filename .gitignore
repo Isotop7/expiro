@@ -266,7 +266,7 @@ FakesAssemblies/
 # custom files    #
 ###################
 isgood.json
-isgood.db
+data/isgood.db
 isgood.sqlite*
 isgood/OpenFoodFactsAPI/api-template.json
 .vscode/

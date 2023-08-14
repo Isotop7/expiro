@@ -10,6 +10,6 @@ public class AppDbContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        optionsBuilder.UseSqlite("Data Source=isgood.sqlite");
+        optionsBuilder.UseSqlite("Data Source=data/isgood.sqlite");
     }
 }
