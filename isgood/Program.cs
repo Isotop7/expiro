@@ -163,13 +163,23 @@ public static class Program
         builder.Services.AddRazorPages();
         builder.Services.AddHealthChecks();
 
+        // Add dbcontext
         builder.Services.AddDbContext<AppDbContext>();
+
         if (_appConfiguration != null)
         {
             builder.Services.AddSingleton<ProductConfiguration>(_appConfiguration.ProductConfiguration);
         }
 
         WebApplication app = builder.Build();
+
+        using (IServiceScope scope = app.Services.CreateScope())
+        {
+            IServiceProvider services = scope.ServiceProvider;
+            AppDbContext dbContext = services.GetRequiredService<AppDbContext>();
+            // Bootstrap database
+            dbContext.BootstrapDatabase();
+        }
 
         // Configure the HTTP request pipeline.
         if (!app.Environment.IsDevelopment())
