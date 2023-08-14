@@ -53,6 +53,10 @@ public class MqttBroker
             {
                 DispatchTopicScannedAtGet(e);
             }
+            else
+            {
+                DispatchUnknownTopic(e);
+            }
 
             return CompletedTask.Instance;
         };
@@ -224,6 +228,11 @@ public class MqttBroker
         }
         catch
         { }
+    }
+
+    private void DispatchUnknownTopic(InterceptingPublishEventArgs ipea)
+    {
+        throw new InvalidOperationException($"Unknown topic '{ipea.ApplicationMessage.Topic}' or invalid content '{ipea.ApplicationMessage.ConvertPayloadToString().Trim()}'");
     }
 
     private void BestBeforeTimeoutTriggered(object? element)
