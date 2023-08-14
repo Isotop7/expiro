@@ -232,7 +232,7 @@ public class MqttBroker
 
     private void DispatchUnknownTopic(InterceptingPublishEventArgs ipea)
     {
-        throw new InvalidOperationException($"Unknown topic '{ipea.ApplicationMessage.Topic}' or invalid content '{ipea.ApplicationMessage.ConvertPayloadToString().Trim()}'");
+        Console.WriteLine($"+ embeddedBroker: Unknown topic '{ipea.ApplicationMessage.Topic}' or invalid content '{ipea.ApplicationMessage.ConvertPayloadToString().Trim()}'");
     }
 
     private void BestBeforeTimeoutTriggered(object? element)
