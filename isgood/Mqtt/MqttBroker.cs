@@ -53,6 +53,10 @@ public class MqttBroker
             {
                 DispatchTopicScannedAtGet(e);
             }
+            else if (e.ApplicationMessage.Topic.Equals(_mqttConfiguration.TopicScannedAtPublish))
+            {
+                Console.WriteLine($"+ embeddedBroker: ScannedAt published with content '{e.ApplicationMessage.ConvertPayloadToString().Trim()}'");
+            }
             else
             {
                 DispatchUnknownTopic(e);
