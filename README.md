@@ -10,7 +10,7 @@
     <img src="https://img.shields.io/github/actions/workflow/status/Isotop7/isgood/dotnet.yml?branch=main" alt="CI @ master" />
 </p>
 
-<h1 align="center">WARNING: This app is currently experiencing a majore rewrite.</h1>
+<h1 align="center">WARNING: This app is currently experiencing a major rewrite.</h1>
 <h2 align="center">See <a href="https://github.com/Isotop7/isgood/issues/34">issue #34</a> for more infos.</h2>
 
 <p align="center">
