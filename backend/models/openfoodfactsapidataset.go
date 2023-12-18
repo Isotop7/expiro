@@ -8,5 +8,5 @@ type OpenFoodFactsAPIDataset struct {
 	Categories  string `json:"categories"`
 	Countries   string `json:"countries"`
 	GenericName string `json:"generic_name"`
-	ImageUrl    string `json:"image_url"`
+	ImageURL    string `json:"image_url"`
 }

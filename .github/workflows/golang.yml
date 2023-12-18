@@ -31,4 +31,6 @@ jobs:
         go mod verify
       
     - name: Build
-      run: CGO_ENABLED=0 GOOS=linux go build -v 
+      run: |
+        cd backend
+        CGO_ENABLED=0 GOOS=linux go build -v 

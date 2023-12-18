@@ -12,7 +12,7 @@ type Product struct {
 	ProductName string    `json:"productName"`
 	Categories  string    `json:"categories"`
 	Countries   string    `json:"countries"`
-	ImageUrl    string    `json:"imageUrl"`
+	ImageURL    string    `json:"imageUrl"`
 	BestBefore  time.Time `json:"bestBefore"`
 	ScannedAt   time.Time `json:"scannedAt"`
 	NotifiedAt  time.Time `json:"notifiedAt"`

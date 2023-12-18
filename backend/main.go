@@ -48,7 +48,7 @@ func main() {
 	}
 
 	// Generate database URI
-	databaseUri := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?charset=utf8mb4&parseTime=True&loc=Local",
+	databaseURI := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?charset=utf8mb4&parseTime=True&loc=Local",
 		dbUser,
 		dbPassword,
 		dbHost,
@@ -56,7 +56,7 @@ func main() {
 		dbName)
 
 	var dbErr error
-	db, dbErr = gorm.Open(mysql.Open(databaseUri), &gorm.Config{})
+	db, dbErr = gorm.Open(mysql.Open(databaseURI), &gorm.Config{})
 
 	// Check if database can be accessed
 	if dbErr != nil {

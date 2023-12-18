@@ -9,9 +9,6 @@ import (
 	"gorm.io/gorm"
 )
 
-/*
- *	GET		'/api/v1/products'
- */
 func GetProducts(c *gin.Context) {
 	db, ok := c.MustGet("db").(*gorm.DB)
 	if !ok {
@@ -25,14 +22,8 @@ func GetProducts(c *gin.Context) {
 	c.JSON(http.StatusOK, products)
 }
 
-/*
- *	GET		'/api/v1/products/:id'
- */
 func GetProduct(c *gin.Context) {}
 
-/*
- *	POST	'/api/v1/products'
- */
 func CreateProduct(c *gin.Context) {
 	db, ok := c.MustGet("db").(*gorm.DB)
 	if !ok {
@@ -61,12 +52,6 @@ func CreateProduct(c *gin.Context) {
 	c.JSON(http.StatusCreated, product)
 }
 
-/*
- *	PATCH	'/api/v1/products/:id'
- */
 func UpdateProduct(c *gin.Context) {}
 
-/*
- *	DELETE	'/api/v1/products/:id'
- */
 func DeleteProduct(c *gin.Context) {}
