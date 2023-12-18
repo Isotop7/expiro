@@ -14,16 +14,13 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
-    - name: Switch to backend folder
-      run: cd ./backend
-
     - name: Setup Go 1.19
       uses: actions/setup-go@v4
       with:
         go-version: '1.19'
 
     - name: Download dependencies
-      run: go get .
+      run: cd backend && go get .
 
     - name: Audit code
       run: |
