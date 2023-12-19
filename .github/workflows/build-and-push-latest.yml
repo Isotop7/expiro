@@ -6,7 +6,7 @@ on:
       - master
 
 jobs:
-  build:
+  publish:
     runs-on: ubuntu-latest
 
     steps:
@@ -24,7 +24,7 @@ jobs:
           password: ${{ secrets.DOCKER_REGISTRY_PASSWORD }}
 
       - name: Build and Push Docker image
-        uses: docker/build-push-action@v5
-        with:
-          push: true
-          tags: ${{ secrets.DOCKER_REGISTRY_URL }}/isgood-backend:latest
+        run: |
+          cd ./backend
+          docker build . --tag ${{ secrets.DOCKER_REGISTRY_URL }}/isgood-backend:latest
+          docker push ${{ secrets.DOCKER_REGISTRY_URL }}/isgood-backend:latest
