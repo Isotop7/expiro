@@ -28,4 +28,4 @@ jobs:
         with:
           context: ./backend
           push: true
-          tags: ${{ secrets.DOCKER_REGISTRY_URL }}/isgood:stable
+          tags: ${{ secrets.DOCKER_REGISTRY_URL }}/isgood-backend:stable
