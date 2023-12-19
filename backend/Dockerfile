@@ -1,4 +1,4 @@
-FROM golang:1.21-alpine
+FROM golang:1.21-alpine as builder
 WORKDIR /app
 
 COPY go.mod go.sum ./
@@ -9,6 +9,9 @@ COPY . ./
 
 RUN go build -v -o /app/isgood-backend
 
+FROM alpine:3.19
+
+COPY --from=builder /app/isgood-backend /app/isgood-backend
 EXPOSE 5050
 
-CMD ["/app/isgood-backend"]
+ENTRYPOINT [ "/app/isgood-backend" ]
