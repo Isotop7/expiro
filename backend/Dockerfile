@@ -12,7 +12,7 @@ RUN go build -v -o /app/isgood-backend
 FROM alpine:3.19
 
 COPY --from=builder /app/isgood-backend /app/isgood-backend
-COPY config.yaml.tmpl /app/config.yaml
+
 EXPOSE 5050
 
 ENTRYPOINT [ "/app/isgood-backend" ]
