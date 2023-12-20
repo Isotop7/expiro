@@ -3,11 +3,8 @@
 <p align="center">
     <img src="https://img.shields.io/github/license/Isotop7/expiro" alt="License" />
     <img src="https://img.shields.io/github/v/release/Isotop7/expiro" alt="Release" />
-    <img src="https://sonarcloud.io/api/project_badges/measure?project=Isotop7_expiro&metric=alert_status" alt="SonarCloud" />
-    <img src="https://sonarcloud.io/api/project_badges/measure?project=Isotop7_expiro&metric=security_rating" alt="Sonarcloud security rating">
-    <img src="https://sonarcloud.io/api/project_badges/measure?project=Isotop7_expiro&metric=bugs" alt="Sonarcloud bugs">
-    <img src="https://sonarcloud.io/api/project_badges/measure?project=Isotop7_expiro&metric=code_smells" alt="Sonarcloud code smells">
-    <img src="https://img.shields.io/github/actions/workflow/status/Isotop7/expiro/dotnet.yml?branch=main" alt="CI @ master" />
+    <img src="https://img.shields.io/github/actions/workflow/status/Isotop7/expiro/golang.yml?branch=main" alt="CI @ master" />
+    <img src="https://img.shields.io/github/actions/workflow/status/Isotop7/expiro/golang.yml?branch=develop" alt="CI @ develop" />
 </p>
 
 <h1 align="center">WARNING: This app is currently experiencing a major rewrite.</h1>
