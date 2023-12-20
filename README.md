@@ -10,6 +10,9 @@
     <img src="https://img.shields.io/github/actions/workflow/status/Isotop7/isgood/dotnet.yml?branch=main" alt="CI @ master" />
 </p>
 
+<h1 align="center">WARNING: This app is currently experiencing a major rewrite.</h1>
+<h2 align="center">See <a href="https://github.com/Isotop7/isgood/issues/34">issue #34</a> for more infos.</h2>
+
 <p align="center">
     ⁉️ Ever wondered if this oat milk is still fresh or when you opened that hummus? In the past you may have thrown it away. Now there is <b>isgood</b>
 </p>
@@ -26,9 +29,9 @@
 
 ## 🛠️ Technologies and Tools
 
-- **Frontend:** Razor, HTML, CSS.
-- **Backend:** C#, ASP.NET Core, Entity Framework Core, MQTT.
-- **Database:** SQLite.
+- **Frontend:** ~~Razor~~, HTML, CSS.
+- **Backend:** Go, Gin, Gorm
+- **Database:** MariaDB.
 - **Code Quality:** SonarCloud, CodeQL.
 - **Continuous Integration:** GitHub Actions.
 
@@ -37,13 +40,11 @@
 ### 🔙 Backend
 
 1. Clone the repository: `git clone https://github.com/Isotop7/isgood.git`
-2. Navigate to the project directory: `cd isgood/isgood`
-3. Build the application: `dotnet build`
-4. Copy the config file `isgood.tmpl.json`, rename it to `isgood.json` and adjust it
-5. Create/update database backend: `dotnet ef database update`
-6. Run the application: `dotnet run`
-7. Open your browser and access the port shown in the console
-8. Test the insertion of products with MQTT
+2. Navigate to the project directory: `cd isgood/backend`
+3. Build the application: `go build -o isgood-backend`
+4. Copy the config file `config.yaml.tmpl`, rename it to `config.yaml` and adjust it
+5. Run the server: `./isgood-server`
+6. ~~Start frontend server~~
 
 ### 💻 Client
 
@@ -54,7 +55,6 @@
 ### 🔙 Backend
 
 - Authentication: Add authentication on the Web UI so only you can edit and delete your digital fridge
-- Customize WebUI: Extend `picocss` with own theme
 - Administrative Functions: Create and Update backend users
 - Personalize fridge: Assign products to users or user groups, send notifications to assigned entity
 - Documentation: Provide screenshots and basic help guide
