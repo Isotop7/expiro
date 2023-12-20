@@ -1,8 +1,8 @@
 package router
 
 import (
-	common "isgood/backend/handlers"
-	v1 "isgood/backend/handlers/v1"
+	common "expiro/backend/handlers"
+	v1 "expiro/backend/handlers/v1"
 
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"

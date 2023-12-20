@@ -1,4 +1,4 @@
-module isgood/backend
+module expiro/backend
 
 go 1.21
 

@@ -7,12 +7,12 @@ RUN go mod download
 COPY *.go ./
 COPY . ./
 
-RUN go build -v -o /app/isgood-backend
+RUN go build -v -o /app/expiro-backend
 
 FROM alpine:3.19
 
-COPY --from=builder /app/isgood-backend /app/isgood-backend
+COPY --from=builder /app/expiro-backend /app/expiro-backend
 
 EXPOSE 5050
 
-ENTRYPOINT [ "/app/isgood-backend" ]
+ENTRYPOINT [ "/app/expiro-backend" ]

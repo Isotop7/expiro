@@ -1,9 +1,9 @@
 package main
 
 import (
+	"expiro/backend/models"
+	"expiro/backend/router"
 	"fmt"
-	"isgood/backend/models"
-	"isgood/backend/router"
 
 	"github.com/spf13/viper"
 	"gorm.io/driver/mysql"
@@ -41,7 +41,7 @@ func main() {
 
 	// Set default values if correctable invalid values were specified
 	if dbName == "" {
-		dbName = "isgood"
+		dbName = "expiro"
 	}
 	if dbPort <= 0 {
 		dbPort = 3306

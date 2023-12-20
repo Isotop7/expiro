@@ -26,5 +26,5 @@ jobs:
       - name: Build and Push Docker image
         run: |
           cd ./backend
-          docker build . --tag ${{ secrets.DOCKER_REGISTRY_URL }}/isgood-backend:stable
-          docker push ${{ secrets.DOCKER_REGISTRY_URL }}/isgood-backend:stable
+          docker build . --tag ${{ secrets.DOCKER_REGISTRY_URL }}/expiro-backend:stable
+          docker push ${{ secrets.DOCKER_REGISTRY_URL }}/expiro-backend:stable
