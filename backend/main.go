@@ -1,6 +1,7 @@
 package main
 
 import (
+	"expiro/backend/controllers"
 	"expiro/backend/models"
 	"expiro/backend/router"
 	"fmt"
@@ -66,8 +67,22 @@ func main() {
 	// Run migrations for database
 	db.AutoMigrate(&models.Product{})
 
+	// Read API controller config and generate instance
+	cntrlTimeout := viper.GetInt("openfoodfacts.timeout")
+	if cntrlTimeout <= 0 {
+		cntrlTimeout = 5
+	}
+	cntrlURL := viper.GetString("openfoodfacts.url")
+	if cntrlURL == "" {
+		panic("URL for OpenFoodFactsAPI not set")
+	}
+	cntrl := controllers.OpenFoodFactsAPIController{
+		URL:     cntrlURL,
+		Timeout: cntrlTimeout,
+	}
+
 	// Call function to setup router and pass database interface
-	r := router.SetupRouter(db)
+	r := router.SetupRouter(db, cntrl)
 
 	// Get server port or instead set default value
 	serverPort := viper.GetInt("server.port")

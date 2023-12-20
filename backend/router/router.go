@@ -1,6 +1,7 @@
 package router
 
 import (
+	"expiro/backend/controllers"
 	common "expiro/backend/handlers"
 	v1 "expiro/backend/handlers/v1"
 
@@ -8,11 +9,15 @@ import (
 	"gorm.io/gorm"
 )
 
-func SetupRouter(db *gorm.DB) *gin.Engine {
+func SetupRouter(db *gorm.DB, cntrl controllers.OpenFoodFactsAPIController) *gin.Engine {
 	r := gin.Default()
 
 	r.Use(func(c *gin.Context) {
 		c.Set("db", db)
+		c.Next()
+	})
+	r.Use(func(c *gin.Context) {
+		c.Set("cntrl", cntrl)
 		c.Next()
 	})
 

@@ -1,6 +1,7 @@
 package v1
 
 import (
+	"expiro/backend/controllers"
 	"expiro/backend/models"
 	"fmt"
 	"net/http"
@@ -65,6 +66,17 @@ func CreateProduct(c *gin.Context) {
 	if product.Barcode == "" {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "barcode missing"})
 		return
+	}
+
+	cntrl, ok := c.MustGet("cntrl").(controllers.OpenFoodFactsAPIController)
+	if !ok {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to get controller from context"})
+		return
+	}
+	var apiProduct models.Product
+	apiProduct, err := cntrl.GetDataset(db, product.Barcode)
+	if err == nil {
+		product = apiProduct
 	}
 
 	createResult := db.Create(&product)
