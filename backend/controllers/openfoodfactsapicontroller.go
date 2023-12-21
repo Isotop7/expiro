@@ -13,8 +13,7 @@ import (
 )
 
 type OpenFoodFactsAPIController struct {
-	URL     string
-	Timeout int
+	Configuration models.OpenFoodFactsConfiguration
 }
 
 func (cntrl OpenFoodFactsAPIController) GetDataset(db *gorm.DB, barcode string) (models.Product, error) {
@@ -30,7 +29,7 @@ func (cntrl OpenFoodFactsAPIController) GetDataset(db *gorm.DB, barcode string) 
 
 	// Query API for dataset
 	go func() {
-		resp, err := http.Get(fmt.Sprintf("%s/%s?fields=%s", cntrl.URL, barcode, filteredDataset))
+		resp, err := http.Get(fmt.Sprintf("%s/%s?fields=%s", cntrl.Configuration.URL, barcode, filteredDataset))
 		// If upstream error is received, we also throw it
 		if err != nil {
 			fmt.Println("Error:", err)

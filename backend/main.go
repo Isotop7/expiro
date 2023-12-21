@@ -14,47 +14,46 @@ import (
 var db *gorm.DB
 
 func main() {
+	// Setup config path
 	viper.SetConfigName("config")
 	viper.SetConfigType("yaml")
 	viper.AddConfigPath(".")
+	// Read environment
 	viper.AutomaticEnv()
 
+	// Read config
 	configErr := viper.ReadInConfig()
 	if configErr != nil {
 		panic(configErr.Error())
 	}
 
-	dbHost := viper.GetString("database.host")
-	dbPort := viper.GetInt("database.port")
-	dbName := viper.GetString("database.name")
-	dbUser := viper.GetString("database.user")
-	dbPassword := viper.GetString("database.password")
+	configuration := models.ExpiroConfiguration{}
+	err := viper.Unmarshal(&configuration)
+	if err != nil {
+		panic(err)
+	}
 
-	if dbHost == "" {
-		panic("No database host specified")
-	}
-	if dbUser == "" {
-		panic("No database user specified")
-	}
-	if dbPassword == "" {
-		panic("No database password specified")
+	// Validate database parametes
+	dbValidErr := configuration.ValidDatabaseConfiguration()
+	if dbValidErr != nil {
+		panic(dbValidErr)
 	}
 
 	// Set default values if correctable invalid values were specified
-	if dbName == "" {
-		dbName = "expiro"
+	if configuration.Database.Name == "" {
+		configuration.Database.Name = "expiro"
 	}
-	if dbPort <= 0 {
-		dbPort = 3306
+	if configuration.Database.Port <= 0 {
+		configuration.Database.Port = 3306
 	}
 
 	// Generate database URI
 	databaseURI := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?charset=utf8mb4&parseTime=True&loc=Local",
-		dbUser,
-		dbPassword,
-		dbHost,
-		dbPort,
-		dbName)
+		configuration.Database.User,
+		configuration.Database.Password,
+		configuration.Database.Host,
+		configuration.Database.Port,
+		configuration.Database.Name)
 
 	var dbErr error
 	db, dbErr = gorm.Open(mysql.Open(databaseURI), &gorm.Config{})
@@ -67,25 +66,32 @@ func main() {
 	// Run migrations for database
 	db.AutoMigrate(&models.Product{})
 
-	// Read API controller config and generate instance
-	cntrlTimeout := viper.GetInt("openfoodfacts.timeout")
-	if cntrlTimeout <= 0 {
-		cntrlTimeout = 5
+	// Check API controller config and generate instance
+	if configuration.OpenFoodFacts.Timeout <= 0 {
+		configuration.OpenFoodFacts.Timeout = 5
 	}
-	cntrlURL := viper.GetString("openfoodfacts.url")
-	if cntrlURL == "" {
+	if configuration.OpenFoodFacts.URL == "" {
 		panic("URL for OpenFoodFactsAPI not set")
 	}
 	cntrl := controllers.OpenFoodFactsAPIController{
-		URL:     cntrlURL,
-		Timeout: cntrlTimeout,
+		Configuration: configuration.OpenFoodFacts,
+	}
+
+	// Setup NotificationController
+	if !configuration.Notification.Enabled {
+		fmt.Println("Notifications are disabled")
+	} else {
+		notificationController := controllers.NotificationController{
+			Configuration: configuration.Notification,
+		}
+		notificationController.Dispatch()
 	}
 
 	// Call function to setup router and pass database interface
 	r := router.SetupRouter(db, cntrl)
 
 	// Get server port or instead set default value
-	serverPort := viper.GetInt("server.port")
+	serverPort := configuration.Server.Port
 	if serverPort <= 0 {
 		serverPort = 5050
 	}
