@@ -14,7 +14,7 @@ type ServerConfiguration struct {
 	Port int
 }
 
-type SmtpConfiguration struct {
+type SMTPConfiguration struct {
 	Host     string
 	Port     int
 	SSL      bool
@@ -27,7 +27,7 @@ type NotificationConfiguration struct {
 	Interval    int
 	FromAddress string
 	ToAddress   string
-	Smtp        SmtpConfiguration
+	SMTP        SMTPConfiguration
 }
 
 type OpenFoodFactsConfiguration struct {
