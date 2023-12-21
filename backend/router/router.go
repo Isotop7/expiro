@@ -29,6 +29,7 @@ func SetupRouter(db *gorm.DB, cntrl controllers.OpenFoodFactsAPIController) *gin
 	r.POST("/api/v1/products", v1.CreateProduct)
 	r.PATCH("/api/v1/products/:id", v1.UpdateProduct)
 	r.DELETE("/api/v1/products/:id", v1.DeleteProduct)
+	r.POST("/api/v1/products/:id/expire", v1.SetExpireAt)
 
 	return r
 }

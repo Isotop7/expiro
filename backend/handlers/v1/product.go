@@ -21,14 +21,14 @@ func GetProducts(c *gin.Context) {
 	var products []models.Product
 	db.Find(&products)
 
-	c.IndentedJSON(http.StatusOK, products)
+	c.JSON(http.StatusOK, products)
 }
 
 func GetProduct(c *gin.Context) {
 	id := c.Param("id")
 
 	if _, err := strconv.Atoi(id); err != nil {
-		c.IndentedJSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("ID '%s' is invalid", id)})
+		c.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("ID '%s' is invalid", id)})
 		return
 	}
 
@@ -42,11 +42,11 @@ func GetProduct(c *gin.Context) {
 	getError := db.First(&product, id)
 
 	if getError.Error != nil || product.ID <= 0 {
-		c.IndentedJSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("Product with id '%s' was not found", id)})
+		c.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("Product with id '%s' was not found", id)})
 		return
 	}
 
-	c.IndentedJSON(http.StatusOK, product)
+	c.JSON(http.StatusOK, product)
 }
 
 func CreateProduct(c *gin.Context) {
@@ -92,7 +92,7 @@ func UpdateProduct(c *gin.Context) {
 	id := c.Param("id")
 
 	if _, err := strconv.Atoi(id); err != nil {
-		c.IndentedJSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("ID '%s' is invalid", id)})
+		c.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("ID '%s' is invalid", id)})
 		return
 	}
 
@@ -115,21 +115,21 @@ func UpdateProduct(c *gin.Context) {
 	}
 
 	var dbProduct models.Product
-	getError := db.First(&product, id)
+	getError := db.First(&dbProduct, id)
 
 	dbProduct.Barcode = product.Barcode
 	dbProduct.ProductName = product.ProductName
 	dbProduct.Categories = product.Categories
 	dbProduct.Countries = product.Countries
 	dbProduct.ImageURL = product.ImageURL
-	dbProduct.BestBefore = product.BestBefore
+	dbProduct.ExpireAt = product.ExpireAt
 
 	if getError.Error != nil || product.ID <= 0 {
-		c.IndentedJSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("Product with id '%s' was not found", id)})
+		c.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("Product with id '%s' was not found", id)})
 		return
 	}
 
-	saveResult := db.Save(&product)
+	saveResult := db.Save(&dbProduct)
 	if saveResult.Error != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": saveResult.Error.Error()})
 		return
@@ -142,7 +142,7 @@ func DeleteProduct(c *gin.Context) {
 	id := c.Param("id")
 
 	if _, err := strconv.Atoi(id); err != nil {
-		c.IndentedJSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("ID '%s' is invalid", id)})
+		c.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("ID '%s' is invalid", id)})
 		return
 	}
 
@@ -159,4 +159,49 @@ func DeleteProduct(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{"success": fmt.Sprintf("Product with ID '%s' was deleted", id)})
+}
+
+func SetExpireAt(c *gin.Context) {
+	id := c.Param("id")
+
+	if _, err := strconv.Atoi(id); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("ID '%s' is invalid", id)})
+		return
+	}
+
+	db, ok := c.MustGet("db").(*gorm.DB)
+	if !ok {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to get database from context"})
+		return
+	}
+
+	var expireAt models.Timestamp
+	if err := c.ShouldBindJSON(&expireAt); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		fmt.Println(err.Error())
+		return
+	}
+
+	var dbProduct models.Product
+	getError := db.First(&dbProduct, id)
+
+	if getError.Error != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("Product with id '%s' was not found", id)})
+		return
+	}
+
+	dbProduct.ExpireAt = expireAt.Timestamp
+
+	saveResult := db.Save(&dbProduct)
+	if saveResult.Error != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": saveResult.Error.Error()})
+		return
+	}
+
+	expireDTO := models.ProductDTOExpire{
+		Barcode:  dbProduct.Barcode,
+		ExpireAt: dbProduct.ExpireAt,
+	}
+
+	c.JSON(http.StatusOK, expireDTO)
 }

@@ -13,7 +13,12 @@ type Product struct {
 	Categories  string    `json:"categories"`
 	Countries   string    `json:"countries"`
 	ImageURL    string    `json:"imageUrl"`
-	BestBefore  time.Time `json:"bestBefore"`
+	ExpireAt    time.Time `json:"expireAt"`
 	ScannedAt   time.Time `json:"scannedAt"`
 	NotifiedAt  time.Time `json:"notifiedAt"`
+}
+
+type ProductDTOExpire struct {
+	Barcode  string    `json:"barcode"`
+	ExpireAt time.Time `json:"expireAt"`
 }

@@ -26,10 +26,11 @@ func (cntrl OpenFoodFactsAPIController) GetDataset(db *gorm.DB, barcode string) 
 	ch := make(chan bool)
 	// Dataset to store query response
 	var dataset models.OpenFoodFactsAPIDataset
+	filteredDataset := "product_name,categories,countries,generic_name,image_url"
 
 	// Query API for dataset
 	go func() {
-		resp, err := http.Get(fmt.Sprintf("%s/%s", cntrl.URL, barcode))
+		resp, err := http.Get(fmt.Sprintf("%s/%s?fields=%s", cntrl.URL, barcode, filteredDataset))
 		// If upstream error is received, we also throw it
 		if err != nil {
 			fmt.Println("Error:", err)
